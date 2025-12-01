@@ -25,7 +25,7 @@ pip install -e .
 cp .env.example .env  # and set OPENAI_API_KEY
 ```
 
-The editable install registers the `consulting-auto-factory` CLI used in the commands below.
+The editable install registers the `consulting-auto-factory` CLI used in the commands below. By default the agents will call the OpenAI Chat Completions API; if `OPENAI_API_KEY` is missing the commands will fail unless you explicitly opt into offline fallbacks.
 
 Generate the sample dataset (already committed, but you can refresh it):
 
@@ -37,6 +37,9 @@ Run the full pipeline:
 
 ```bash
 consulting-auto-factory run --input-dir data/input --brief config/business_brief.txt --reports-dir reports
+
+# When you cannot reach the API, use deterministic offline fallbacks (no LLM calls):
+# consulting-auto-factory run --offline
 ```
 
 Outputs appear under `reports/`:

@@ -15,9 +15,10 @@ Only return JSON with fields: title, objectives (list), steps (list of objects w
 
 
 class PlannerAgent:
-    def __init__(self, model: str | None = None, temperature: float = 0.3) -> None:
+    def __init__(self, model: str | None = None, temperature: float = 0.3, allow_fallback: bool = False) -> None:
         self.model = model
         self.temperature = temperature
+        self.allow_fallback = allow_fallback
 
     def create_plan(self, brief: str, schema_info: Dict[str, SchemaInfo]) -> AnalysisPlan:
         schema_summary = []
@@ -29,7 +30,9 @@ class PlannerAgent:
             response = llm_client.chat_json(PLAN_PROMPT, user, model=self.model, temperature=self.temperature)
             return AnalysisPlan(**response)
         except Exception:
-            # Fallback deterministic plan
+            if not self.allow_fallback:
+                raise
+            # Fallback deterministic plan when offline
             steps = [
                 PlanStep(id="kpi", description="Compute revenue KPIs and order counts", required_columns=["total_amount"], output_type="kpi_table"),
                 PlanStep(id="time_trend", description="Revenue by month", required_columns=["order_date", "total_amount"], output_type="time_series_chart"),

@@ -13,9 +13,10 @@ Include: title, executive summary, key findings, analysis sections, risks & oppo
 
 
 class InsightsAgent:
-    def __init__(self, model: str | None = None, temperature: float = 0.4) -> None:
+    def __init__(self, model: str | None = None, temperature: float = 0.4, allow_fallback: bool = False) -> None:
         self.model = model
         self.temperature = temperature
+        self.allow_fallback = allow_fallback
 
     def _format_inputs(self, brief: str, analysis_result: AnalysisResult) -> str:
         lines: List[str] = ["Business brief:", brief, "\nKPIs:"]
@@ -34,6 +35,8 @@ class InsightsAgent:
         try:
             return llm_client.chat(REPORT_PROMPT, user, model=self.model, temperature=self.temperature)
         except Exception:
+            if not self.allow_fallback:
+                raise
             # offline fallback
             sections = [
                 "# Consulting Report",

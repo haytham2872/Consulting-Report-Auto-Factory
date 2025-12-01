@@ -11,15 +11,18 @@ Keep each slide to 3-5 bullets.
 
 
 class SlideOutlineAgent:
-    def __init__(self, model: str | None = None, temperature: float = 0.4) -> None:
+    def __init__(self, model: str | None = None, temperature: float = 0.4, allow_fallback: bool = False) -> None:
         self.model = model
         self.temperature = temperature
+        self.allow_fallback = allow_fallback
 
     def generate_outline(self, report_markdown: str) -> SlideDeckOutline:
         try:
             payload = llm_client.chat_json(SLIDE_PROMPT, report_markdown, model=self.model, temperature=self.temperature)
             return SlideDeckOutline(**payload)
         except Exception:
+            if not self.allow_fallback:
+                raise
             slides = [
                 Slide(
                     title="Executive summary",
