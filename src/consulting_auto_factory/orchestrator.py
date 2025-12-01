@@ -57,9 +57,10 @@ def run_pipeline(input_dir: str = "data/input", brief_path: str = "config/busine
 
 
 def plan_only(input_dir: str = "data/input", brief_path: str = "config/business_brief.txt"):
-    _, schemas = load_with_schema(input_dir)
-    brief = read_brief(brief_path)
-    planner = PlannerAgent()
+    settings = Settings(input_dir=Path(input_dir), brief_path=Path(brief_path))
+    _, schemas = load_with_schema(settings.input_dir)
+    brief = read_brief(settings.brief_path)
+    planner = PlannerAgent(model=settings.model, temperature=settings.temperature)
     plan = planner.create_plan(brief, schemas)
     return plan
 

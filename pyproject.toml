@@ -10,7 +10,7 @@ dependencies = [
     "python-dotenv>=1.0.1",
     "pandas>=2.1.4",
     "matplotlib>=3.8.0",
-    "typer[all]>=0.12.3",
+    "typer>=0.12.3",
     "pydantic>=2.6.4",
     "pyyaml>=6.0.1",
 ]
@@ -20,6 +20,12 @@ test = ["pytest>=8.2.0"]
 
 [project.scripts]
 consulting-auto-factory = "consulting_auto_factory.cli:app"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [build-system]
 requires = ["setuptools", "wheel"]

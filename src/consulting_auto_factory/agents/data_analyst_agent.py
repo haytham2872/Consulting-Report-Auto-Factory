@@ -13,6 +13,7 @@ class DataAnalystAgent:
     def __init__(self, reports_dir: str | Path = "reports") -> None:
         self.reports_dir = Path(reports_dir)
         self.charts_dir = self.reports_dir / "charts"
+        self.charts_dir.mkdir(parents=True, exist_ok=True)
 
     def _find_numeric_column(self, df: pd.DataFrame, candidates: List[str]) -> str | None:
         for candidate in candidates:

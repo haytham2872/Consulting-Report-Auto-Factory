@@ -25,6 +25,8 @@ pip install -e .
 cp .env.example .env  # and set OPENAI_API_KEY
 ```
 
+The editable install registers the `consulting-auto-factory` CLI used in the commands below.
+
 Generate the sample dataset (already committed, but you can refresh it):
 
 ```bash
