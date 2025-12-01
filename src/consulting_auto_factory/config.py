@@ -7,12 +7,12 @@ from pydantic import BaseModel, Field, ConfigDict
 
 
 class Settings(BaseModel):
-    model: str = Field(default="gpt-4.1-mini", description="Default OpenAI model")
+    model: str = Field(default="claude-3-haiku-20240307", description="Default Claude model")
     temperature: float = Field(default=0.3, ge=0.0, le=1.0)
     reports_dir: Path = Path("reports")
     input_dir: Path = Path("data/input")
     brief_path: Path = Path("config/business_brief.txt")
-    offline: bool = Field(default=False, description="Allow deterministic offline fallbacks instead of calling the OpenAI API")
+    offline: bool = Field(default=False, description="Allow deterministic offline fallbacks instead of calling the Anthropic API")
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
 

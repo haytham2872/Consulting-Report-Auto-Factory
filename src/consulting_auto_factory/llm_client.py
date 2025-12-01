@@ -1,35 +1,34 @@
-"""Simple wrapper around OpenAI Chat Completions."""
+"""Simple wrapper around Claude messages API (Anthropic)."""
 from __future__ import annotations
 
 import json
 import os
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from dotenv import load_dotenv
-from openai import OpenAI
+from anthropic import Anthropic
 
 load_dotenv()
 
-DEFAULT_MODEL = os.getenv("CONSULTING_FACTORY_MODEL", "gpt-4.1-mini")
+DEFAULT_MODEL = os.getenv("CONSULTING_FACTORY_MODEL", "claude-3-haiku-20240307")
 
-def _client() -> OpenAI:
-    api_key = os.getenv("OPENAI_API_KEY")
+def _client() -> Anthropic:
+    api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
-        raise RuntimeError("OPENAI_API_KEY is not set. Create a .env file or export the variable.")
-    return OpenAI(api_key=api_key)
+        raise RuntimeError("ANTHROPIC_API_KEY is not set. Create a .env file or export the variable.")
+    return Anthropic(api_key=api_key)
 
 
 def chat(system_prompt: str, user_content: str, model: str | None = None, temperature: float = 0.3) -> str:
     client = _client()
-    response = client.chat.completions.create(
+    response = client.messages.create(
         model=model or DEFAULT_MODEL,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_content},
-        ],
+        system=system_prompt,
+        messages=[{"role": "user", "content": user_content}],
+        max_tokens=1000,
         temperature=temperature,
     )
-    return response.choices[0].message.content or ""
+    return "".join([part.text for part in response.content if getattr(part, "type", "") == "text"])
 
 
 def chat_json(system_prompt: str, user_content: str, model: str | None = None, temperature: float = 0.2) -> Dict[str, Any]:
