@@ -1,0 +1,3 @@
+We are an e-commerce retailer operating in Europe and North America.
+This dataset contains orders over the past 18 months and a customer table.
+We want to understand revenue trends, top segments, churn patterns, and identify opportunities to increase customer lifetime value.

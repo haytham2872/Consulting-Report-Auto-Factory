@@ -1,0 +1,26 @@
+[project]
+name = "consulting-report-auto-factory"
+version = "0.1.0"
+description = "Multi-agent system that turns business CSV data into consulting-style reports with charts."
+authors = [{name = "Consulting Report Auto-Factory"}]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.37.0",
+    "python-dotenv>=1.0.1",
+    "pandas>=2.1.4",
+    "matplotlib>=3.8.0",
+    "typer[all]>=0.12.3",
+    "pydantic>=2.6.4",
+    "pyyaml>=6.0.1",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8.2.0"]
+
+[project.scripts]
+consulting-auto-factory = "consulting_auto_factory.cli:app"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
