@@ -1,16 +1,12 @@
 # Consulting Report Auto-Factory
 
-Consulting Report Auto-Factory is a Python-based multi-agent pipeline that reads business CSV data and a short brief, plans analyses, generates KPIs and charts, and writes a consulting-style report plus slide outline. It is designed to be realistic enough for a Deloitte AI Agents internship demo yet simple to run locally.
+Consulting Report Auto-Factory is a Python-based multi-agent pipeline that reads business CSV data and a short brief, plans analyses, generates KPIs and charts, and writes a consulting-style report. It is designed to be realistic enough for a Deloitte AI Agents internship demo yet simple to run locally.
 
 ```
 +-----------------+       +-----------------+       +----------------+       +-------------------+
 |   Data Loader   | --->  |  PlannerAgent   | --->  | DataAnalystAgent| ---> |  InsightsAgent    |
 | (CSV + schema)  |       | (LLM plan JSON) |       | (pandas + MPL) |       | (Report Markdown) |
-+-----------------+       +-----------------+       +----------------+       +---------+---------+
-                                                                               |
-                                                                               v
-                                                                       SlideOutlineAgent
-                                                              (Markdown slide deck outline)
++-----------------+       +-----------------+       +----------------+       +-------------------+
 ```
 
 ## Quickstart
@@ -44,7 +40,6 @@ Outputs appear under `reports/`:
 - `analysis_summary.json`: structured KPIs, plan, tables, charts, and run metadata (timestamp, model, input file digests)
 - `charts/*.png`: matplotlib visuals
 - `consulting_report.md`: client-ready narrative that reuses the same KPIs/tables/charts and metadata for consistency
-- `slides_outline.md`: slide deck outline grounded on the report + data facts
 
 Preview only the plan without running analysis:
 
@@ -62,7 +57,7 @@ consulting-auto-factory show-plan
   - `analysis_tools.py`: pandas utilities for KPIs
   - `charting.py`: matplotlib chart creators
   - `models.py`: Pydantic data classes
-  - `agents/`: Planner, DataAnalyst, Insights, SlideOutline agents
+  - `agents/`: Planner, DataAnalyst, Insights agents
 - `data/input/`: sample CSVs (`orders.csv`, `customers.csv`)
 - `config/business_brief.txt`: sample brief
 - `reports/`: generated outputs (git-ignored)
@@ -74,7 +69,6 @@ consulting-auto-factory show-plan
 - **PlannerAgent**: Reads schema + brief, proposes `AnalysisPlan` (objectives, steps).
 - **DataAnalystAgent**: Executes generic business analyses using pandas, calculates KPIs, and produces charts.
 - **InsightsAgent**: Produces a consulting-style Markdown report referencing generated visuals.
-- **SlideOutlineAgent**: Converts the report into a slide deck outline with bullets and suggested visuals.
 
 ## Example Brief
 
@@ -94,7 +88,7 @@ We want to understand revenue trends, top segments, churn patterns, and identify
 ## Why this matters for AI agents & consulting
 
 - Demonstrates a lightweight multi-agent architecture with clear tool usage.
-- Separates planning, analysis, insight generation, and slide-building steps.
+- Separates planning, analysis, and insight generation steps.
 - Uses structured Pydantic models for reliable data exchange between agents.
 
 ## License

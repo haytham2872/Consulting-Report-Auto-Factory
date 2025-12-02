@@ -8,7 +8,6 @@ from typing import Dict
 from .agents.data_analyst_agent import DataAnalystAgent
 from .agents.insights_agent import InsightsAgent
 from .agents.planner_agent import PlannerAgent
-from .agents.slide_outline_agent import SlideOutlineAgent
 from .config import Settings
 from .data_loader import load_with_schema, summarize_input_files
 from .models import AnalysisResult, RunMetadata
@@ -44,26 +43,9 @@ def run_pipeline(
         json.dump(analysis_result.model_dump(), f, indent=2)
 
     insights = InsightsAgent(model=settings.model, temperature=settings.temperature)
-    data_facts = insights.build_data_facts(analysis_result)
     report_md = insights.generate_report(brief, analysis_result)
     with open(settings.reports_dir / "consulting_report.md", "w", encoding="utf-8") as f:
         f.write(report_md)
-
-    slide_agent = SlideOutlineAgent(model=settings.model, temperature=settings.temperature)
-    outline = slide_agent.generate_outline(report_md, data_facts=data_facts)
-    with open(settings.reports_dir / "slides_outline.md", "w", encoding="utf-8") as f:
-        f.write("# Slide Outline\n\n")
-        if outline.overview:
-            f.write(outline.overview + "\n\n")
-        for slide in outline.slides:
-            f.write(f"## {slide.title}\n")
-            for bullet in slide.bullets:
-                f.write(f"- {bullet}\n")
-            if slide.visual:
-                f.write(f"Visual: {slide.visual}\n")
-            if slide.notes:
-                f.write(f"Notes: {slide.notes}\n")
-            f.write("\n")
 
 
 def plan_only(input_dir: str = "data/input", brief_path: str = "config/business_brief.txt"):

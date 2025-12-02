@@ -24,7 +24,7 @@ def chat(
     user_content: str,
     model: str | None = None,
     temperature: float = 0.3,
-    max_tokens: int = 700,
+    max_tokens: int = 500,
 ) -> str:
     client = _client()
     response = client.messages.create(
@@ -42,7 +42,7 @@ def chat_json(
     user_content: str,
     model: str | None = None,
     temperature: float = 0.2,
-    max_tokens: int = 700,
+    max_tokens: int = 500,
 ) -> Dict[str, Any]:
     raw = chat(system_prompt, user_content, model=model, temperature=temperature, max_tokens=max_tokens)
     try:

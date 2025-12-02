@@ -54,18 +54,6 @@ class AnalysisResult(BaseModel):
     metadata: Optional["RunMetadata"] = None
 
 
-class Slide(BaseModel):
-    title: str
-    bullets: List[str]
-    visual: Optional[str] = None
-    notes: Optional[str] = None
-
-
-class SlideDeckOutline(BaseModel):
-    slides: List[Slide]
-    overview: Optional[str] = None
-
-
 class InputFileProfile(BaseModel):
     filename: str
     rows: int
