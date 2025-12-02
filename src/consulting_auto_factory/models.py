@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class PlanStep(BaseModel):
@@ -10,6 +10,12 @@ class PlanStep(BaseModel):
     description: str
     required_columns: Optional[List[str]] = None
     output_type: str = "kpi_table"
+
+    @field_validator("id", mode="before")
+    @classmethod
+    def cast_id_to_str(cls, value: object) -> str:
+        """Ensure plan step identifiers are strings even if the model returns integers."""
+        return str(value)
 
 
 class AnalysisPlan(BaseModel):
