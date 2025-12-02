@@ -38,18 +38,10 @@ class NamedTable(BaseModel):
     description: Optional[str] = None
 
 
-class ChartInfo(BaseModel):
-    title: str
-    chart_type: str
-    filename: str
-    description: Optional[str] = None
-
-
 class AnalysisResult(BaseModel):
     plan: AnalysisPlan
     kpis: List[KPI] = Field(default_factory=list)
     tables: List[NamedTable] = Field(default_factory=list)
-    charts: List[ChartInfo] = Field(default_factory=list)
     notes: Optional[str] = None
     metadata: Optional["RunMetadata"] = None
 

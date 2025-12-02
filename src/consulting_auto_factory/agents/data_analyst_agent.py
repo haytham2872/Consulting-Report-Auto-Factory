@@ -5,15 +5,13 @@ from typing import Dict, List
 
 import pandas as pd
 
-from .. import analysis_tools, charting
-from ..models import AnalysisPlan, AnalysisResult, ChartInfo, KPI, NamedTable
+from .. import analysis_tools
+from ..models import AnalysisPlan, AnalysisResult, KPI, NamedTable
 
 
 class DataAnalystAgent:
     def __init__(self, reports_dir: str | Path = "reports") -> None:
         self.reports_dir = Path(reports_dir)
-        self.charts_dir = self.reports_dir / "charts"
-        self.charts_dir.mkdir(parents=True, exist_ok=True)
 
     def _find_numeric_column(self, df: pd.DataFrame, candidates: List[str]) -> str | None:
         for candidate in candidates:
@@ -25,7 +23,6 @@ class DataAnalystAgent:
     def run_analysis(self, plan: AnalysisPlan, dataframes: Dict[str, pd.DataFrame]) -> AnalysisResult:
         kpis: List[KPI] = []
         tables: List[NamedTable] = []
-        charts: List[ChartInfo] = []
 
         orders_df = dataframes.get("orders.csv")
         customers_df = dataframes.get("customers.csv")
@@ -55,19 +52,6 @@ class DataAnalystAgent:
                     )
                 )
 
-                if date_col:
-                    monthly = analysis_tools.aggregate_by_time(orders_df, date_col, revenue_col, freq="ME")
-                    chart_path = self.charts_dir / "revenue_by_month.png"
-                    charting.generate_time_series(monthly, date_col, "total", "Revenue by Month", chart_path)
-                    charts.append(
-                        ChartInfo(
-                            title="Revenue by Month",
-                            chart_type="time_series",
-                            filename=str(chart_path.relative_to(self.reports_dir)),
-                            description="Monthly revenue trend",
-                        )
-                    )
-
                 category_col = None
                 for candidate in ["product_category", "category", "segment"]:
                     if candidate in orders_df.columns:
@@ -75,16 +59,6 @@ class DataAnalystAgent:
                         break
                 if category_col:
                     top = analysis_tools.top_categories(orders_df, category_col, revenue_col, n=5)
-                    chart_path = self.charts_dir / "top_categories.png"
-                    charting.generate_bar_chart(top, category_col, revenue_col or "value", "Top Categories", chart_path)
-                    charts.append(
-                        ChartInfo(
-                            title="Top Categories",
-                            chart_type="bar",
-                            filename=str(chart_path.relative_to(self.reports_dir)),
-                            description="Highest revenue categories",
-                        )
-                    )
                     tables.append(
                         NamedTable(
                             title="Top categories",
@@ -126,5 +100,5 @@ class DataAnalystAgent:
                         description="Customer LTV stats",
                     )
                 )
-        return AnalysisResult(plan=plan, kpis=kpis, tables=tables, charts=charts)
+        return AnalysisResult(plan=plan, kpis=kpis, tables=tables)
 

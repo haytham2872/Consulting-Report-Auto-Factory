@@ -38,7 +38,6 @@ def run_pipeline(
     )
 
     settings.reports_dir.mkdir(parents=True, exist_ok=True)
-    (settings.reports_dir / "charts").mkdir(parents=True, exist_ok=True)
     with open(settings.reports_dir / "analysis_summary.json", "w", encoding="utf-8") as f:
         json.dump(analysis_result.model_dump(), f, indent=2)
 

@@ -1,12 +1,12 @@
 # Consulting Report Auto-Factory
 
-Consulting Report Auto-Factory is a Python-based multi-agent pipeline that reads business CSV data and a short brief, plans analyses, generates KPIs and charts, and writes a consulting-style report. It is designed to be realistic enough for a Deloitte AI Agents internship demo yet simple to run locally.
+Consulting Report Auto-Factory is a Python-based multi-agent pipeline that reads business CSV data and a short brief, plans analyses, generates KPIs and tables, and writes a consulting-style report. It is designed as a lightweight MVP demonstrating agentic AI for automated business analysis.
 
 ```
-+-----------------+       +-----------------+       +----------------+       +-------------------+
-|   Data Loader   | --->  |  PlannerAgent   | --->  | DataAnalystAgent| ---> |  InsightsAgent    |
-| (CSV + schema)  |       | (LLM plan JSON) |       | (pandas + MPL) |       | (Report Markdown) |
-+-----------------+       +-----------------+       +----------------+       +-------------------+
++-----------------+       +-----------------+       +------------------+       +-------------------+
+|   Data Loader   | --->  |  PlannerAgent   | --->  | DataAnalystAgent | --->  |  InsightsAgent    |
+| (CSV + schema)  |       | (LLM plan JSON) |       | (pandas analysis)|       | (Report Markdown) |
++-----------------+       +-----------------+       +------------------+       +-------------------+
 ```
 
 ## Quickstart
@@ -37,9 +37,8 @@ consulting-auto-factory run --input-dir data/input --brief config/business_brief
 ```
 
 Outputs appear under `reports/`:
-- `analysis_summary.json`: structured KPIs, plan, tables, charts, and run metadata (timestamp, model, input file digests)
-- `charts/*.png`: matplotlib visuals
-- `consulting_report.md`: client-ready narrative that reuses the same KPIs/tables/charts and metadata for consistency
+- `analysis_summary.json`: structured KPIs, plan, tables, and run metadata (timestamp, model, input file digests)
+- `consulting_report.md`: client-ready narrative with executive summary, key findings, data tables, and actionable recommendations
 
 Preview only the plan without running analysis:
 
@@ -54,8 +53,7 @@ consulting-auto-factory show-plan
   - `orchestrator.py`: connects agents end-to-end
   - `llm_client.py`: Claude (Anthropic) chat helper
   - `data_loader.py`: CSV loading and schema inference
-  - `analysis_tools.py`: pandas utilities for KPIs
-  - `charting.py`: matplotlib chart creators
+  - `analysis_tools.py`: pandas utilities for KPIs and analysis
   - `models.py`: Pydantic data classes
   - `agents/`: Planner, DataAnalyst, Insights agents
 - `data/input/`: sample CSVs (`orders.csv`, `customers.csv`)
@@ -67,8 +65,8 @@ consulting-auto-factory show-plan
 ## Agents Overview
 
 - **PlannerAgent**: Reads schema + brief, proposes `AnalysisPlan` (objectives, steps).
-- **DataAnalystAgent**: Executes generic business analyses using pandas, calculates KPIs, and produces charts.
-- **InsightsAgent**: Produces a consulting-style Markdown report referencing generated visuals.
+- **DataAnalystAgent**: Executes business analyses using pandas, calculates KPIs, generates summary tables.
+- **InsightsAgent**: Produces a consulting-style Markdown report with executive summary and actionable insights.
 
 ## Example Brief
 

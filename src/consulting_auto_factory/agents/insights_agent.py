@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import List
 
 from .. import llm_client
-from ..models import AnalysisResult, ChartInfo, KPI, NamedTable
+from ..models import AnalysisResult, KPI, NamedTable
 
 
 REPORT_PROMPT = """You are a consulting analyst who writes crisp Markdown reports.
@@ -28,9 +28,6 @@ class InsightsAgent:
         lines.append("\nTables:")
         for table in analysis_result.tables:
             lines.append(f"- {table.title} with columns {table.columns}")
-        lines.append("\nCharts:")
-        for chart in analysis_result.charts:
-            lines.append(f"- {chart.title} -> {chart.filename}")
         return "\n".join(lines)
 
     def _render_kpis(self, kpis: List[KPI]) -> List[str]:
@@ -51,11 +48,7 @@ class InsightsAgent:
             rendered.append("")
         return rendered
 
-    def _render_charts(self, charts: List[ChartInfo]) -> List[str]:
-        lines: List[str] = []
-        for chart in charts:
-            lines.append(f"- ![{chart.title}]({chart.filename}) — {chart.description or 'Chart output'}")
-        return lines
+
 
     def build_data_facts(self, analysis_result: AnalysisResult) -> str:
         facts = []
@@ -63,8 +56,6 @@ class InsightsAgent:
             facts.append(f"- {kpi.name}: {self._format_number(kpi.value)} ({kpi.explanation})")
         for table in analysis_result.tables:
             facts.append(f"- Table {table.title}: columns={table.columns}")
-        for chart in analysis_result.charts:
-            facts.append(f"- Chart {chart.title}: {chart.filename}")
         return "\n".join(facts)
 
     def _render_metadata(self, analysis_result: AnalysisResult) -> List[str]:
@@ -92,11 +83,8 @@ class InsightsAgent:
         if analysis_result.tables:
             sections.append("\n## Tables")
             sections.extend(self._render_tables(analysis_result.tables))
-        if analysis_result.charts:
-            sections.append("## Charts")
-            sections.extend(self._render_charts(analysis_result.charts))
         sections.append("\n## Recommended actions")
         sections.append("- Prioritize initiatives indicated by the strongest KPIs.")
-        sections.append("- Validate trends in the provided charts with stakeholders.")
+        sections.append("- Validate findings with stakeholders and refine analysis as needed.")
         return "\n".join(sections)
 

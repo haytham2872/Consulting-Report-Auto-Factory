@@ -25,6 +25,6 @@ class PlannerAgent:
             columns = ", ".join([f"{c.name} ({c.dtype})" for c in schema.columns])
             schema_summary.append(f"{name}: {columns}")
         user = f"Brief:\n{brief}\n\nSchemas:\n" + "\n".join(schema_summary)
-        response = llm_client.chat_json(PLAN_PROMPT, user, model=self.model, temperature=self.temperature)
+        response = llm_client.chat_json(PLAN_PROMPT, user, model=self.model, temperature=self.temperature, max_tokens=2000)
         return AnalysisPlan(**response)
 
