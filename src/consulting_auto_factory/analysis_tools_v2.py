@@ -6,6 +6,27 @@ Each tool is a function that takes dataframes and returns structured results.
 from typing import Dict, List, Any, Optional
 import pandas as pd
 from datetime import datetime
+import numpy as np
+
+
+def _serialize_value(value):
+    """Convert pandas/numpy types to JSON-serializable Python types."""
+    if pd.isna(value):
+        return None
+    elif isinstance(value, (pd.Timestamp, datetime)):
+        return value.isoformat() if hasattr(value, 'isoformat') else str(value)
+    elif isinstance(value, (np.integer, np.int64, np.int32)):
+        return int(value)
+    elif isinstance(value, (np.floating, np.float64, np.float32)):
+        return float(value)
+    elif isinstance(value, np.bool_):
+        return bool(value)
+    elif isinstance(value, (list, tuple)):
+        return [_serialize_value(v) for v in value]
+    elif isinstance(value, dict):
+        return {k: _serialize_value(v) for k, v in value.items()}
+    else:
+        return value
 
 
 def compute_revenue_summary(df: pd.DataFrame, amount_column: str) -> Dict[str, Any]:
@@ -139,7 +160,7 @@ def compute_time_series(
 
         return {
             "time_series": [
-                {"period": str(date.date()), "value": float(val)}
+                {"period": _serialize_value(date), "value": _serialize_value(val)}
                 for date, val in resampled.items() if pd.notna(val)
             ],
             "period_type": period,
@@ -200,7 +221,7 @@ def get_dataframe_summary(df: pd.DataFrame) -> Dict[str, Any]:
                     "name": col,
                     "dtype": str(df[col].dtype),
                     "null_count": int(df[col].isna().sum()),
-                    "sample_values": df[col].dropna().head(3).tolist() if len(df) > 0 else []
+                    "sample_values": [_serialize_value(v) for v in df[col].dropna().head(3).tolist()] if len(df) > 0 else []
                 }
                 for col in df.columns
             ]
