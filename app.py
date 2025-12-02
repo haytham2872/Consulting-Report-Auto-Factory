@@ -20,10 +20,26 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for clean, cohesive design
+# Custom CSS with provided color palette
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    /* Color Palette Variables */
+    :root {
+        --primary-accent: #2563EB;
+        --hero-bg-left: #0F172A;
+        --hero-bg-right: #1D4ED8;
+        --page-bg: #F3F4F6;
+        --card-bg: #FFFFFF;
+        --text-primary: #111827;
+        --text-muted: #4B5563;
+        --hero-text: #F9FAFB;
+        --border-color: #E5E7EB;
+        --success: #22C55E;
+        --warning: #F97316;
+        --error: #EF4444;
+    }
 
     /* Global styling */
     * {
@@ -35,25 +51,24 @@ st.markdown("""
         max-width: 1400px;
     }
 
-    /* Main app background - subtle gradient */
+    /* Page background */
     .stApp {
-        background: linear-gradient(180deg, #f8fafb 0%, #ffffff 100%);
+        background-color: #F3F4F6;
     }
 
-    /* Premium header with clean design */
+    /* Hero header with gradient */
     .main-header {
-        background: linear-gradient(135deg, #1e3a5f 0%, #2d5f8d 100%);
+        background: linear-gradient(135deg, #0F172A 0%, #1D4ED8 100%);
         padding: 2.5rem 2.5rem 2rem 2.5rem;
         border-radius: 12px;
         margin-bottom: 2.5rem;
-        box-shadow: 0 4px 20px rgba(30, 58, 95, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.2);
     }
 
     .header-badge {
         display: inline-block;
-        background: rgba(16, 185, 129, 0.15);
-        color: #10b981;
+        background: rgba(37, 99, 235, 0.2);
+        color: #60A5FA;
         padding: 0.35rem 0.9rem;
         border-radius: 16px;
         font-size: 0.7rem;
@@ -61,11 +76,11 @@ st.markdown("""
         letter-spacing: 0.5px;
         text-transform: uppercase;
         margin-bottom: 1rem;
-        border: 1px solid rgba(16, 185, 129, 0.3);
+        border: 1px solid rgba(96, 165, 250, 0.3);
     }
 
     .main-header h1 {
-        color: #ffffff;
+        color: #F9FAFB;
         margin: 0;
         font-size: 2.2rem;
         font-weight: 700;
@@ -73,48 +88,38 @@ st.markdown("""
     }
 
     .main-header p {
-        color: #cbd5e1;
+        color: #D1D5DB;
         margin: 0.5rem 0 0 0;
         font-size: 1rem;
         font-weight: 400;
     }
 
-    /* Consistent card containers */
-    .content-card {
-        background: #ffffff;
-        padding: 2rem;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        margin-bottom: 1.5rem;
-    }
-
     /* Section headers */
     h3 {
-        color: #1e293b;
+        color: #111827;
         font-weight: 600;
         font-size: 1.1rem;
         margin-bottom: 0.5rem;
     }
 
     .section-desc {
-        color: #64748b;
+        color: #4B5563;
         font-size: 0.875rem;
         margin-bottom: 1.25rem;
         line-height: 1.5;
     }
 
-    /* File uploader - consistent with cards */
+    /* File uploader - white card */
     [data-testid="stFileUploader"] {
-        background: #f9fafb !important;
-        border: 2px dashed #d1d5db !important;
+        background: #FFFFFF !important;
+        border: 2px dashed #E5E7EB !important;
         border-radius: 10px !important;
         padding: 1.5rem !important;
     }
 
     [data-testid="stFileUploader"]:hover {
-        border-color: #0891b2 !important;
-        background: #f0fdfa !important;
+        border-color: #2563EB !important;
+        background: #F9FAFB !important;
     }
 
     [data-testid="stFileUploader"] section {
@@ -123,71 +128,89 @@ st.markdown("""
     }
 
     [data-testid="stFileUploader"] small {
-        color: #64748b !important;
+        color: #4B5563 !important;
     }
 
-    /* Text area - consistent styling */
+    [data-testid="stFileUploader"] label {
+        color: #111827 !important;
+    }
+
+    /* Text area - white card */
     .stTextArea textarea {
-        border: 2px solid #e5e7eb !important;
+        border: 2px solid #E5E7EB !important;
         border-radius: 10px !important;
         font-family: 'Inter', sans-serif !important;
         font-size: 0.9rem !important;
         padding: 1rem !important;
-        background: #f9fafb !important;
-        color: #1e293b !important;
+        background: #FFFFFF !important;
+        color: #111827 !important;
     }
 
     .stTextArea textarea:focus {
-        border-color: #0891b2 !important;
-        background: #ffffff !important;
-        box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1) !important;
+        border-color: #2563EB !important;
+        background: #FFFFFF !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
     }
 
-    /* Buttons */
+    .stTextArea label {
+        color: #111827 !important;
+    }
+
+    /* Primary buttons with accent color */
     .stButton > button {
-        background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%) !important;
+        background: #2563EB !important;
         color: white !important;
         font-weight: 600 !important;
         font-size: 0.95rem !important;
         padding: 0.75rem 2rem !important;
         border-radius: 8px !important;
         border: none !important;
-        box-shadow: 0 2px 8px rgba(8, 145, 178, 0.25) !important;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3) !important;
         transition: all 0.2s ease !important;
     }
 
     .stButton > button:hover {
-        background: linear-gradient(135deg, #0e7490 0%, #155e75 100%) !important;
-        box-shadow: 0 4px 12px rgba(8, 145, 178, 0.35) !important;
+        background: #1D4ED8 !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4) !important;
         transform: translateY(-1px) !important;
     }
 
     .stButton > button:disabled {
-        background: #e5e7eb !important;
-        color: #9ca3af !important;
+        background: #D1D5DB !important;
+        color: #9CA3AF !important;
         box-shadow: none !important;
     }
 
     /* Success messages */
     .stSuccess {
-        background: #f0fdf4 !important;
+        background: #F0FDF4 !important;
         color: #166534 !important;
-        border: 1px solid #bbf7d0 !important;
+        border: 1px solid #86EFAC !important;
+        border-radius: 8px !important;
+        padding: 0.75rem 1rem !important;
+    }
+
+    /* Error messages */
+    .stError {
+        background: #FEF2F2 !important;
+        color: #991B1B !important;
+        border: 1px solid #FCA5A5 !important;
         border-radius: 8px !important;
         padding: 0.75rem 1rem !important;
     }
 
     /* Expander */
     .streamlit-expanderHeader {
-        background: #f9fafb !important;
-        border: 1px solid #e5e7eb !important;
+        background: #FFFFFF !important;
+        border: 1px solid #E5E7EB !important;
         border-radius: 6px !important;
         font-weight: 500 !important;
-        color: #1e293b !important;
+        color: #111827 !important;
     }
 
     .streamlit-expanderHeader:hover {
-        background: #f3f4f6 !important;
+        background: #F9FAFB !important;
+        border-color: #D1D5DB !important;
     }
 
     /* Status badges */
@@ -201,77 +224,82 @@ st.markdown("""
     }
 
     .status-success {
-        background: #10b981;
-        color: #ffffff;
+        background: #22C55E;
+        color: #FFFFFF;
     }
 
     .status-processing {
-        background: #f59e0b;
-        color: #ffffff;
+        background: #F97316;
+        color: #FFFFFF;
     }
 
     /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.5rem;
-        background: #f9fafb;
+        background: #FFFFFF;
         padding: 0.4rem;
         border-radius: 8px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid #E5E7EB;
     }
 
     .stTabs [data-baseweb="tab"] {
         font-weight: 500;
         font-size: 0.9rem;
-        color: #64748b;
+        color: #4B5563;
         padding: 0.6rem 1.25rem;
         border-radius: 6px;
     }
 
+    .stTabs [data-baseweb="tab"]:hover {
+        background: #F9FAFB;
+        color: #111827;
+    }
+
     .stTabs [aria-selected="true"] {
-        background: #0891b2 !important;
-        color: #ffffff !important;
+        background: #2563EB !important;
+        color: #FFFFFF !important;
     }
 
     /* Metrics */
     [data-testid="stMetricValue"] {
         font-size: 1.75rem;
         font-weight: 700;
-        color: #1e293b;
+        color: #111827;
     }
 
     [data-testid="stMetricLabel"] {
         font-size: 0.75rem;
         font-weight: 600;
-        color: #64748b;
+        color: #4B5563;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
 
     [data-testid="stMetric"] {
-        background: #f9fafb;
+        background: #FFFFFF;
         padding: 1rem;
         border-radius: 8px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid #E5E7EB;
     }
 
     /* Progress bar */
     .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, #0891b2 0%, #10b981 100%);
+        background: #2563EB;
     }
 
     /* Download buttons */
     .stDownloadButton > button {
-        background: #ffffff !important;
-        color: #1e293b !important;
-        border: 2px solid #0891b2 !important;
+        background: #FFFFFF !important;
+        color: #111827 !important;
+        border: 2px solid #2563EB !important;
         font-weight: 600 !important;
         padding: 0.65rem 1.5rem !important;
         border-radius: 8px !important;
     }
 
     .stDownloadButton > button:hover {
-        background: #0891b2 !important;
-        color: #ffffff !important;
+        background: #2563EB !important;
+        color: #FFFFFF !important;
         transform: translateY(-1px) !important;
     }
 
@@ -284,30 +312,39 @@ st.markdown("""
     hr {
         margin: 2rem 0;
         border: none;
-        border-top: 1px solid #e5e7eb;
+        border-top: 1px solid #E5E7EB;
     }
 
     /* Results container */
     .results-container {
-        background: #ffffff;
+        background: #FFFFFF;
         padding: 2rem;
         border-radius: 10px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid #E5E7EB;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
     /* Tables */
     .dataframe {
-        border: 1px solid #e5e7eb !important;
+        border: 1px solid #E5E7EB !important;
         border-radius: 6px !important;
     }
 
     .dataframe th {
-        background: #f9fafb !important;
-        color: #1e293b !important;
+        background: #F9FAFB !important;
+        color: #111827 !important;
         font-weight: 600 !important;
         font-size: 0.75rem !important;
         text-transform: uppercase !important;
+    }
+
+    .dataframe td {
+        color: #111827 !important;
+    }
+
+    /* All markdown text */
+    .stMarkdown {
+        color: #111827;
     }
 
     /* Clean animations */
@@ -330,7 +367,7 @@ if 'report_content' not in st.session_state:
 if 'analysis_data' not in st.session_state:
     st.session_state.analysis_data = None
 
-# Header
+# Hero Header
 st.markdown("""
 <div class="main-header">
     <div class="header-badge">AI-Powered Intelligence</div>
@@ -414,7 +451,7 @@ if generate_button:
                 st.markdown("""
                 <div style="text-align: center; padding: 2rem;">
                     <div class="status-badge status-processing">Processing Analysis</div>
-                    <p style="color: #64748b; margin-top: 0.75rem;">AI agents are analyzing your data</p>
+                    <p style="color: #4B5563; margin-top: 0.75rem;">AI agents are analyzing your data</p>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -422,7 +459,7 @@ if generate_button:
                 status_text = st.empty()
 
                 try:
-                    status_text.markdown('<p style="text-align: center; color: #64748b;">Planning Agent: Creating strategy...</p>', unsafe_allow_html=True)
+                    status_text.markdown('<p style="text-align: center; color: #4B5563;">Planning Agent: Creating strategy...</p>', unsafe_allow_html=True)
                     progress_bar.progress(25)
 
                     run_pipeline(
@@ -431,13 +468,13 @@ if generate_button:
                         reports_dir=str(reports_dir)
                     )
 
-                    status_text.markdown('<p style="text-align: center; color: #64748b;">Data Analyst: Computing metrics...</p>', unsafe_allow_html=True)
+                    status_text.markdown('<p style="text-align: center; color: #4B5563;">Data Analyst: Computing metrics...</p>', unsafe_allow_html=True)
                     progress_bar.progress(50)
 
-                    status_text.markdown('<p style="text-align: center; color: #64748b;">Insights Agent: Writing report...</p>', unsafe_allow_html=True)
+                    status_text.markdown('<p style="text-align: center; color: #4B5563;">Insights Agent: Writing report...</p>', unsafe_allow_html=True)
                     progress_bar.progress(75)
 
-                    status_text.markdown('<p style="text-align: center; color: #10b981; font-weight: 600;">✓ Complete</p>', unsafe_allow_html=True)
+                    status_text.markdown('<p style="text-align: center; color: #22C55E; font-weight: 600;">✓ Complete</p>', unsafe_allow_html=True)
                     progress_bar.progress(100)
 
                     # Load results
@@ -581,8 +618,8 @@ if st.session_state.report_generated and st.session_state.report_content:
 # Footer
 st.markdown("---")
 st.markdown("""
-<div style="text-align: center; color: #94a3b8; padding: 2rem;">
-    <p style="margin: 0; font-weight: 500;">Powered by Claude AI</p>
-    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem;">Enterprise Business Intelligence · Secure & Confidential</p>
+<div style="text-align: center; color: #6B7280; padding: 2rem;">
+    <p style="margin: 0; font-weight: 500; color: #111827;">Powered by Claude AI</p>
+    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #4B5563;">Enterprise Business Intelligence · Secure & Confidential</p>
 </div>
 """, unsafe_allow_html=True)
