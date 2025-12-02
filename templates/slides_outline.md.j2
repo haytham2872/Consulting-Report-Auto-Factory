@@ -1,0 +1,20 @@
+# Slides Outline
+
+## Metadata
+- Run timestamp: {{ metadata.run_timestamp }}
+- Git commit: {{ metadata.git_commit }}
+- Dataset checksum: {{ metadata.dataset_sha256 }}
+
+## KPI Highlights
+- Total revenue: {{ kpis.total_revenue | currency }}
+- Avg order value: {{ kpis.average_order_value | currency }}
+- Churn rate: {{ kpis.churn_rate | percent }}
+- LTV mean: {{ kpis.ltv_mean | currency }}
+
+## Category Leaders
+{% for item in top_categories %}- {{ item.category }} — {{ item.revenue | currency }}
+{% endfor %}
+
+## Visuals
+{% for chart in charts %}- Slide: {{ chart.title }} ({{ chart.path }})
+{% endfor %}
