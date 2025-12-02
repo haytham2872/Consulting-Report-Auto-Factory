@@ -61,23 +61,20 @@ def _check_charts(markdown: str, chart_paths: Iterable[str], base_dir: Path) -> 
             resolved = base_dir / resolved
         if not resolved.exists():
             failures.append(f"Chart file missing on disk: {resolved}")
+def _check_charts(markdown: str, chart_paths: Iterable[str]) -> Iterable[str]:
+    failures = []
+    for chart in chart_paths:
+        if chart not in markdown:
+            failures.append(f"Chart reference '{chart}' missing from markdown")
+        if not Path(chart).exists():
+            failures.append(f"Chart file missing on disk: {chart}")
     return failures
 
 
 def _check_metadata(markdown: str, metadata: Dict[str, str]) -> Iterable[str]:
     failures = []
     for key, value in metadata.items():
-        if not value:
-            continue
-        if key == "token_usage" and isinstance(value, dict):
-            token_summary = f"{value.get('input_tokens', 0)}/{value.get('output_tokens', 0)}"
-            if token_summary not in markdown:
-                failures.append(
-                    "Provenance field 'token_usage' with value "
-                    f"'{token_summary}' missing from markdown"
-                )
-            continue
-        if str(value) not in markdown:
+        if value and str(value) not in markdown:
             failures.append(f"Provenance field '{key}' with value '{value}' missing from markdown")
     return failures
 
