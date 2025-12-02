@@ -20,235 +20,343 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for sophisticated, corporate styling
+# Custom CSS for premium, sophisticated styling
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
-    /* Global styling */
-    .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
+    /* Global styling with premium color palette */
+    html, body, [class*="css"] {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    /* Main header styling - Corporate navy gradient */
+    .block-container {
+        padding-top: 1.5rem;
+        padding-bottom: 3rem;
+        max-width: 1400px;
+    }
+
+    /* Premium header with subtle pattern */
     .main-header {
-        background: linear-gradient(135deg, #1a2332 0%, #2c3e50 50%, #34495e 100%);
-        padding: 2.5rem 3rem;
-        border-radius: 12px;
-        margin-bottom: 2.5rem;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        border-left: 5px solid #0097A7;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        padding: 3rem 3rem 2.5rem 3rem;
+        border-radius: 16px;
+        margin-bottom: 3rem;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .main-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+            radial-gradient(circle at 20% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(5, 150, 105, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .main-header-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .header-badge {
+        display: inline-block;
+        background: rgba(5, 150, 105, 0.15);
+        color: #10b981;
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
     .main-header h1 {
         color: #ffffff;
         margin: 0;
-        font-size: 2.2rem;
-        font-weight: 600;
-        letter-spacing: -0.5px;
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: -1px;
+        line-height: 1.2;
     }
 
     .main-header p {
-        color: #b8c5d6;
+        color: #94a3b8;
         margin: 0.75rem 0 0 0;
-        font-size: 1.05rem;
+        font-size: 1.1rem;
         font-weight: 400;
+        line-height: 1.6;
     }
 
-    /* Section headers */
+    .header-accent {
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, #06b6d4, #10b981);
+        border-radius: 2px;
+        margin-top: 1.5rem;
+    }
+
+    /* Section styling */
+    .section-container {
+        background: #ffffff;
+        padding: 2rem;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .section-container:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
     .stMarkdown h3 {
-        color: #2c3e50;
-        font-weight: 600;
-        font-size: 1.3rem;
+        color: #0f172a;
+        font-weight: 700;
+        font-size: 1.25rem;
         margin-bottom: 0.5rem;
-        letter-spacing: -0.3px;
+        letter-spacing: -0.5px;
     }
 
-    /* Section descriptions */
     .section-desc {
-        color: #5a6c7d;
-        font-size: 0.95rem;
-        margin-bottom: 1rem;
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 1.25rem;
+        line-height: 1.5;
     }
 
-    /* Status badge styling */
+    /* Status badges with premium styling */
     .status-badge {
         display: inline-block;
-        padding: 0.6rem 1.2rem;
-        border-radius: 6px;
-        font-weight: 500;
-        font-size: 0.95rem;
+        padding: 0.7rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
         margin: 0.5rem 0;
         letter-spacing: 0.3px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .status-success {
-        background: #e8f5e9;
-        color: #2e7d32;
-        border-left: 4px solid #43a047;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: #ffffff;
     }
 
     .status-processing {
-        background: #fff3e0;
-        color: #e65100;
-        border-left: 4px solid #fb8c00;
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: #ffffff;
     }
 
     .status-info {
-        background: #e3f2fd;
-        color: #1565c0;
-        border-left: 4px solid #1976d2;
+        background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        color: #ffffff;
     }
 
     /* Results container */
     .results-container {
         background: #ffffff;
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
         margin-top: 1.5rem;
-        border: 1px solid #e8eef3;
+        border: 1px solid #e2e8f0;
     }
 
-    /* Metric cards */
+    /* Premium metric cards */
     [data-testid="stMetricValue"] {
-        font-size: 1.8rem;
-        font-weight: 600;
-        color: #2c3e50;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #0f172a;
+        font-variant-numeric: tabular-nums;
     }
 
     [data-testid="stMetricLabel"] {
-        font-size: 0.85rem;
-        font-weight: 500;
-        color: #5a6c7d;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #64748b;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.8px;
     }
 
-    /* Buttons */
+    [data-testid="stMetric"] {
+        background: #f8fafc;
+        padding: 1.25rem;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+
+    [data-testid="stMetric"]:hover {
+        background: #ffffff;
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        transform: translateY(-2px);
+    }
+
+    /* Premium buttons */
     .stButton > button {
-        background: linear-gradient(135deg, #0097A7 0%, #00838F 100%);
+        background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
         color: white;
         font-weight: 600;
         font-size: 1rem;
-        padding: 0.75rem 2rem;
-        border-radius: 8px;
+        padding: 0.875rem 2.5rem;
+        border-radius: 10px;
         border: none;
-        box-shadow: 0 4px 12px rgba(0, 151, 167, 0.3);
+        box-shadow: 0 4px 14px rgba(8, 145, 178, 0.3);
         transition: all 0.3s ease;
         letter-spacing: 0.3px;
     }
 
     .stButton > button:hover {
-        background: linear-gradient(135deg, #00838F 0%, #006064 100%);
-        box-shadow: 0 6px 16px rgba(0, 151, 167, 0.4);
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, #0e7490 0%, #155e75 100%);
+        box-shadow: 0 6px 20px rgba(8, 145, 178, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .stButton > button:active {
+        transform: translateY(0px);
     }
 
     .stButton > button:disabled {
-        background: #cfd8dc;
-        color: #90a4ae;
+        background: #e2e8f0;
+        color: #94a3b8;
         box-shadow: none;
     }
 
-    /* File uploader */
+    /* File uploader premium styling */
     [data-testid="stFileUploader"] {
-        background: #f8fafb;
-        border: 2px dashed #b0bec5;
-        border-radius: 8px;
-        padding: 1.5rem;
+        background: #f8fafc;
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 2rem;
+        transition: all 0.3s ease;
     }
 
     [data-testid="stFileUploader"]:hover {
-        border-color: #0097A7;
-        background: #f1f8f9;
+        border-color: #0891b2;
+        background: linear-gradient(135deg, #f0fdfa 0%, #f0f9ff 100%);
+        box-shadow: 0 4px 12px rgba(8, 145, 178, 0.1);
     }
 
-    /* Text area */
+    /* Text area premium styling */
     .stTextArea textarea {
-        border: 2px solid #e0e5e9;
-        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
         font-family: 'Inter', sans-serif;
         font-size: 0.95rem;
         padding: 1rem;
+        transition: all 0.3s ease;
+        background: #f8fafc;
     }
 
     .stTextArea textarea:focus {
-        border-color: #0097A7;
-        box-shadow: 0 0 0 3px rgba(0, 151, 167, 0.1);
+        border-color: #0891b2;
+        box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.1);
+        background: #ffffff;
     }
 
-    /* Tabs */
+    /* Premium tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.5rem;
-        background-color: #f8fafb;
+        background-color: #f8fafc;
         padding: 0.5rem;
-        border-radius: 8px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
     }
 
     .stTabs [data-baseweb="tab"] {
-        font-weight: 500;
+        font-weight: 600;
         font-size: 0.95rem;
-        color: #5a6c7d;
-        padding: 0.75rem 1.5rem;
-        border-radius: 6px;
+        color: #64748b;
+        padding: 0.75rem 1.75rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .stTabs [data-baseweb="tab"]:hover {
+        background-color: #f1f5f9;
+        color: #334155;
     }
 
     .stTabs [aria-selected="true"] {
-        background-color: #ffffff;
-        color: #0097A7;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
     }
 
     /* Expanders */
     .streamlit-expanderHeader {
-        font-weight: 500;
+        font-weight: 600;
         font-size: 1rem;
-        color: #2c3e50;
-        background-color: #f8fafb;
-        border-radius: 6px;
+        color: #0f172a;
+        background-color: #f8fafc;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
     }
 
     .streamlit-expanderHeader:hover {
-        background-color: #f1f5f7;
+        background-color: #f1f5f9;
+        border-color: #cbd5e1;
     }
 
     /* Progress bar */
     .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, #0097A7 0%, #00ACC1 100%);
+        background: linear-gradient(90deg, #06b6d4 0%, #10b981 100%);
+        border-radius: 10px;
     }
 
-    /* Success message */
+    /* Success/Error messages */
     .stSuccess {
-        background-color: #e8f5e9;
-        color: #2e7d32;
-        border-left: 4px solid #43a047;
-        border-radius: 6px;
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
+        border-left: 4px solid #10b981;
+        border-radius: 8px;
         padding: 1rem;
+        font-weight: 500;
+    }
+
+    .stError {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #991b1b;
+        border-left: 4px solid #ef4444;
+        border-radius: 8px;
+        padding: 1rem;
+        font-weight: 500;
     }
 
     /* Hide Streamlit branding */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
+    header {visibility: hidden;}
 
     /* Divider styling */
     hr {
-        margin: 2rem 0;
+        margin: 3rem 0;
         border: none;
-        border-top: 1px solid #e8eef3;
+        border-top: 1px solid #e2e8f0;
     }
 
     /* Smooth animations */
-    .stMarkdown, .stFileUploader, .stTextArea {
-        animation: fadeIn 0.4s ease-out;
+    .stMarkdown, .stFileUploader, .stTextArea, [data-testid="stMetric"] {
+        animation: fadeInUp 0.5s ease-out;
     }
 
-    @keyframes fadeIn {
+    @keyframes fadeInUp {
         from {
             opacity: 0;
-            transform: translateY(8px);
+            transform: translateY(20px);
         }
         to {
             opacity: 1;
@@ -259,15 +367,50 @@ st.markdown("""
     /* Download buttons */
     .stDownloadButton > button {
         background: #ffffff;
-        color: #2c3e50;
-        border: 2px solid #0097A7;
-        font-weight: 500;
+        color: #0f172a;
+        border: 2px solid #0891b2;
+        font-weight: 600;
+        padding: 0.75rem 2rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
     }
 
     .stDownloadButton > button:hover {
-        background: #0097A7;
+        background: #0891b2;
         color: #ffffff;
-        border-color: #0097A7;
+        border-color: #0891b2;
+        box-shadow: 0 4px 14px rgba(8, 145, 178, 0.3);
+        transform: translateY(-2px);
+    }
+
+    /* Code/monospace elements */
+    code {
+        font-family: 'JetBrains Mono', monospace;
+        background: #f1f5f9;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        color: #0f172a;
+        font-size: 0.9em;
+    }
+
+    /* Tables */
+    .dataframe {
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+    }
+
+    .dataframe th {
+        background: #f8fafc !important;
+        color: #0f172a !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    .dataframe td {
+        color: #334155 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -280,11 +423,15 @@ if 'report_content' not in st.session_state:
 if 'analysis_data' not in st.session_state:
     st.session_state.analysis_data = None
 
-# Header
+# Premium Header
 st.markdown("""
 <div class="main-header">
-    <h1>Consulting Report Auto-Factory</h1>
-    <p>Enterprise AI-powered business intelligence · Transform data into actionable insights in minutes</p>
+    <div class="main-header-content">
+        <div class="header-badge">AI-Powered Intelligence</div>
+        <h1>Consulting Report Auto-Factory</h1>
+        <p>Transform raw business data into actionable executive insights using multi-agent AI architecture</p>
+        <div class="header-accent"></div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -293,7 +440,7 @@ col1, col2 = st.columns([1, 1], gap="large")
 
 with col1:
     st.markdown("### Data Upload")
-    st.markdown('<p class="section-desc">Upload your business data files in CSV format</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-desc">Upload CSV files containing your business data for automated analysis</p>', unsafe_allow_html=True)
 
     uploaded_files = st.file_uploader(
         "Drag and drop CSV files here",
@@ -310,8 +457,8 @@ with col1:
                 st.markdown(f"• **{file.name}** · {file.size / 1024:.1f} KB")
 
 with col2:
-    st.markdown("### Business Brief")
-    st.markdown('<p class="section-desc">Describe your analysis objectives and business context</p>', unsafe_allow_html=True)
+    st.markdown("### Business Context")
+    st.markdown('<p class="section-desc">Describe your business objectives and the insights you need</p>', unsafe_allow_html=True)
 
     business_brief = st.text_area(
         "Enter your business brief",
@@ -328,7 +475,7 @@ st.markdown("---")
 col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
 with col_btn2:
     generate_button = st.button(
-        "Generate Analysis Report",
+        "Generate Executive Report",
         type="primary",
         use_container_width=True,
         disabled=not uploaded_files or not business_brief
@@ -362,12 +509,12 @@ if generate_button:
             # Show processing animation
             with st.spinner(""):
                 st.markdown("""
-                <div style="text-align: center; padding: 2rem;">
+                <div style="text-align: center; padding: 2.5rem;">
                     <div class="status-badge status-processing">
-                        Processing Analysis Request
+                        Processing Analysis
                     </div>
-                    <p style="color: #5a6c7d; margin-top: 1rem; font-size: 0.95rem;">
-                        Multi-agent AI system analyzing your data and generating insights
+                    <p style="color: #64748b; margin-top: 1rem; font-size: 0.95rem;">
+                        Multi-agent AI system is analyzing your data
                     </p>
                 </div>
                 """, unsafe_allow_html=True)
@@ -376,7 +523,7 @@ if generate_button:
                 status_text = st.empty()
 
                 # Stage 1: Planning
-                status_text.markdown('<p style="text-align: center; color: #5a6c7d;">Planning Agent: Creating analysis strategy...</p>', unsafe_allow_html=True)
+                status_text.markdown('<p style="text-align: center; color: #64748b; font-weight: 500;">Planning Agent: Designing analysis strategy...</p>', unsafe_allow_html=True)
                 progress_bar.progress(25)
 
                 try:
@@ -388,15 +535,15 @@ if generate_button:
                     )
 
                     # Stage 2: Analysis
-                    status_text.markdown('<p style="text-align: center; color: #5a6c7d;">Data Analyst Agent: Computing business metrics...</p>', unsafe_allow_html=True)
+                    status_text.markdown('<p style="text-align: center; color: #64748b; font-weight: 500;">Data Analyst Agent: Computing business metrics...</p>', unsafe_allow_html=True)
                     progress_bar.progress(50)
 
                     # Stage 3: Insights
-                    status_text.markdown('<p style="text-align: center; color: #5a6c7d;">Insights Agent: Generating executive report...</p>', unsafe_allow_html=True)
+                    status_text.markdown('<p style="text-align: center; color: #64748b; font-weight: 500;">Insights Agent: Generating executive report...</p>', unsafe_allow_html=True)
                     progress_bar.progress(75)
 
                     # Stage 4: Complete
-                    status_text.markdown('<p style="text-align: center; color: #2e7d32; font-weight: 500;">✓ Analysis complete</p>', unsafe_allow_html=True)
+                    status_text.markdown('<p style="text-align: center; color: #10b981; font-weight: 600;">✓ Analysis Complete</p>', unsafe_allow_html=True)
                     progress_bar.progress(100)
 
                     # Load results
@@ -429,7 +576,7 @@ if st.session_state.report_generated and st.session_state.report_content:
     """, unsafe_allow_html=True)
 
     # Create tabs for different views
-    tab1, tab2, tab3 = st.tabs(["Executive Report", "Analysis Data", "Download"])
+    tab1, tab2, tab3 = st.tabs(["Executive Report", "Analytics Dashboard", "Export"])
 
     with tab1:
         st.markdown('<div class="results-container">', unsafe_allow_html=True)
@@ -438,7 +585,7 @@ if st.session_state.report_generated and st.session_state.report_content:
 
     with tab2:
         if st.session_state.analysis_data:
-            st.markdown("### Analysis Summary")
+            st.markdown("### Analysis Overview")
 
             # Display metadata
             if 'metadata' in st.session_state.analysis_data:
@@ -461,11 +608,11 @@ if st.session_state.report_generated and st.session_state.report_content:
                 with st.expander("Analysis Plan", expanded=True):
                     plan = st.session_state.analysis_data['plan']
                     st.markdown(f"**{plan.get('title', 'Analysis Plan')}**")
-                    st.markdown("**Objectives:**")
+                    st.markdown("**Strategic Objectives:**")
                     for obj in plan.get('objectives', []):
                         st.markdown(f"• {obj}")
 
-            # Display KPIs - FIXED: Iterate over list of KPI objects
+            # Display KPIs
             if 'kpis' in st.session_state.analysis_data:
                 with st.expander("Key Performance Indicators", expanded=True):
                     kpis = st.session_state.analysis_data['kpis']
@@ -522,14 +669,14 @@ if st.session_state.report_generated and st.session_state.report_content:
                 st.json(st.session_state.analysis_data)
 
     with tab3:
-        st.markdown("### Download Reports")
-        st.markdown('<p class="section-desc">Export your analysis results for further processing or sharing</p>', unsafe_allow_html=True)
+        st.markdown("### Export Reports")
+        st.markdown('<p class="section-desc">Download your analysis results in multiple formats</p>', unsafe_allow_html=True)
 
         col1, col2 = st.columns(2, gap="large")
 
         with col1:
-            st.markdown("#### Markdown Report")
-            st.markdown("Client-ready narrative report with executive summary, insights, and recommendations")
+            st.markdown("#### Executive Report")
+            st.markdown("Client-ready narrative with insights and strategic recommendations")
             st.download_button(
                 label="Download Markdown (.md)",
                 data=st.session_state.report_content,
@@ -539,8 +686,8 @@ if st.session_state.report_generated and st.session_state.report_content:
             )
 
         with col2:
-            st.markdown("#### Analysis Data")
-            st.markdown("Structured JSON data with KPIs, tables, and complete analysis metadata")
+            st.markdown("#### Structured Data")
+            st.markdown("Complete analysis data with KPIs, tables, and metadata")
             if st.session_state.analysis_data:
                 st.download_button(
                     label="Download JSON (.json)",
@@ -550,11 +697,11 @@ if st.session_state.report_generated and st.session_state.report_content:
                     use_container_width=True
                 )
 
-# Footer
+# Premium Footer
 st.markdown("---")
 st.markdown("""
-<div style="text-align: center; color: #90a4ae; padding: 2rem; font-size: 0.9rem;">
-    <p style="margin: 0;">Powered by Claude AI · Enterprise-grade automated business intelligence</p>
-    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem;">Confidential & Secure · Data processed locally</p>
+<div style="text-align: center; color: #94a3b8; padding: 2.5rem; font-size: 0.9rem;">
+    <p style="margin: 0; font-weight: 500;">Powered by Claude AI</p>
+    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem;">Enterprise-grade automated business intelligence · Secure & Confidential</p>
 </div>
 """, unsafe_allow_html=True)
