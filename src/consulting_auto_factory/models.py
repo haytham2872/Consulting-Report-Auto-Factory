@@ -45,6 +45,7 @@ class AnalysisResult(BaseModel):
     tables: List[NamedTable] = Field(default_factory=list)
     charts: List[ChartInfo] = Field(default_factory=list)
     notes: Optional[str] = None
+    metadata: Optional["RunMetadata"] = None
 
 
 class Slide(BaseModel):
@@ -57,3 +58,18 @@ class Slide(BaseModel):
 class SlideDeckOutline(BaseModel):
     slides: List[Slide]
     overview: Optional[str] = None
+
+
+class InputFileProfile(BaseModel):
+    filename: str
+    rows: int
+    columns: int
+    sha256: str
+
+
+class RunMetadata(BaseModel):
+    run_timestamp: str
+    model: str
+    temperature: float
+    offline: bool
+    input_files: List[InputFileProfile] = Field(default_factory=list)

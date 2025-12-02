@@ -42,11 +42,13 @@ consulting-auto-factory run --input-dir data/input --brief config/business_brief
 # consulting-auto-factory run --offline
 ```
 
+Offline fallback keeps the same computed KPIs/tables/charts and metadata, but the executive summary/key findings are deterministic stubs (no Claude call).
+
 Outputs appear under `reports/`:
-- `analysis_summary.json`: structured KPIs and notes
+- `analysis_summary.json`: structured KPIs, plan, tables, charts, and run metadata (timestamp, model, input file digests)
 - `charts/*.png`: matplotlib visuals
-- `consulting_report.md`: client-ready narrative
-- `slides_outline.md`: slide deck outline
+- `consulting_report.md`: client-ready narrative that reuses the same KPIs/tables/charts and metadata for consistency
+- `slides_outline.md`: slide deck outline grounded on the report + data facts
 
 Preview only the plan without running analysis:
 

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, Tuple
+import hashlib
+from typing import Dict, List, Tuple
 
 import pandas as pd
 
 from .config import SchemaColumn, SchemaInfo
+from .models import InputFileProfile
 
 
 DATE_LIKE = {"date", "_at", "_on"}
@@ -56,3 +58,16 @@ def load_with_schema(input_dir: str | Path) -> Tuple[Dict[str, pd.DataFrame], Di
         dataframes[name] = df
         schemas[name] = build_schema(df, name)
     return dataframes, schemas
+
+
+def summarize_input_files(dataframes: Dict[str, pd.DataFrame], input_dir: str | Path) -> List[InputFileProfile]:
+    profiles: List[InputFileProfile] = []
+    for name, df in dataframes.items():
+        csv_path = Path(input_dir) / name
+        sha256 = ""
+        if csv_path.exists():
+            digest = hashlib.sha256()
+            digest.update(csv_path.read_bytes())
+            sha256 = digest.hexdigest()
+        profiles.append(InputFileProfile(filename=name, rows=len(df), columns=len(df.columns), sha256=sha256))
+    return profiles

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict
 
@@ -9,8 +10,8 @@ from .agents.insights_agent import InsightsAgent
 from .agents.planner_agent import PlannerAgent
 from .agents.slide_outline_agent import SlideOutlineAgent
 from .config import Settings
-from .data_loader import load_with_schema
-from .models import AnalysisResult
+from .data_loader import load_with_schema, summarize_input_files
+from .models import AnalysisResult, RunMetadata
 
 
 def read_brief(path: str | Path) -> str:
@@ -30,6 +31,13 @@ def run_pipeline(
 
     analyst = DataAnalystAgent(reports_dir=settings.reports_dir)
     analysis_result: AnalysisResult = analyst.run_analysis(plan, dataframes)
+    analysis_result.metadata = RunMetadata(
+        run_timestamp=datetime.now(timezone.utc).isoformat(),
+        model=settings.model,
+        temperature=settings.temperature,
+        offline=settings.offline,
+        input_files=summarize_input_files(dataframes, settings.input_dir),
+    )
 
     settings.reports_dir.mkdir(parents=True, exist_ok=True)
     (settings.reports_dir / "charts").mkdir(parents=True, exist_ok=True)
@@ -37,12 +45,13 @@ def run_pipeline(
         json.dump(analysis_result.model_dump(), f, indent=2)
 
     insights = InsightsAgent(model=settings.model, temperature=settings.temperature, allow_fallback=settings.offline)
+    data_facts = insights.build_data_facts(analysis_result)
     report_md = insights.generate_report(brief, analysis_result)
     with open(settings.reports_dir / "consulting_report.md", "w", encoding="utf-8") as f:
         f.write(report_md)
 
     slide_agent = SlideOutlineAgent(model=settings.model, temperature=settings.temperature, allow_fallback=settings.offline)
-    outline = slide_agent.generate_outline(report_md)
+    outline = slide_agent.generate_outline(report_md, data_facts=data_facts)
     with open(settings.reports_dir / "slides_outline.md", "w", encoding="utf-8") as f:
         f.write("# Slide Outline\n\n")
         if outline.overview:

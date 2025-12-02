@@ -16,9 +16,18 @@ class SlideOutlineAgent:
         self.temperature = temperature
         self.allow_fallback = allow_fallback
 
-    def generate_outline(self, report_markdown: str) -> SlideDeckOutline:
+    def generate_outline(self, report_markdown: str, data_facts: str | None = None) -> SlideDeckOutline:
+        prompt_content = report_markdown
+        if data_facts:
+            prompt_content += "\n\nData facts (use exactly):\n" + data_facts
         try:
-            payload = llm_client.chat_json(SLIDE_PROMPT, report_markdown, model=self.model, temperature=self.temperature)
+            payload = llm_client.chat_json(
+                SLIDE_PROMPT,
+                prompt_content,
+                model=self.model,
+                temperature=self.temperature,
+                max_tokens=500,
+            )
             return SlideDeckOutline(**payload)
         except Exception:
             if not self.allow_fallback:

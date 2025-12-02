@@ -19,20 +19,32 @@ def _client() -> Anthropic:
     return Anthropic(api_key=api_key)
 
 
-def chat(system_prompt: str, user_content: str, model: str | None = None, temperature: float = 0.3) -> str:
+def chat(
+    system_prompt: str,
+    user_content: str,
+    model: str | None = None,
+    temperature: float = 0.3,
+    max_tokens: int = 700,
+) -> str:
     client = _client()
     response = client.messages.create(
         model=model or DEFAULT_MODEL,
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
-        max_tokens=1000,
+        max_tokens=max_tokens,
         temperature=temperature,
     )
     return "".join([part.text for part in response.content if getattr(part, "type", "") == "text"])
 
 
-def chat_json(system_prompt: str, user_content: str, model: str | None = None, temperature: float = 0.2) -> Dict[str, Any]:
-    raw = chat(system_prompt, user_content, model=model, temperature=temperature)
+def chat_json(
+    system_prompt: str,
+    user_content: str,
+    model: str | None = None,
+    temperature: float = 0.2,
+    max_tokens: int = 700,
+) -> Dict[str, Any]:
+    raw = chat(system_prompt, user_content, model=model, temperature=temperature, max_tokens=max_tokens)
     try:
         return json.loads(raw)
     except json.JSONDecodeError as exc:  # pragma: no cover - defensive
