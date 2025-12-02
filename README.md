@@ -23,6 +23,23 @@ cp .env.example .env  # and set ANTHROPIC_API_KEY
 
 The editable install registers the `consulting-auto-factory` CLI used in the commands below. By default the agents call Anthropic Claude (cost-effective `claude-3-haiku-20240307` unless you override `CONSULTING_FACTORY_MODEL`). Set `ANTHROPIC_API_KEY` before running commands.
 
+### Web UI (Recommended)
+
+Launch the interactive web interface:
+
+```bash
+streamlit run app.py
+```
+
+The web UI provides:
+- Drag-and-drop file upload for CSV files
+- Interactive business brief editor
+- Real-time processing with animated progress
+- Beautiful report rendering
+- Download options for both Markdown and JSON outputs
+
+### CLI Usage
+
 Generate the sample dataset (already committed, but you can refresh it):
 
 ```bash
@@ -48,6 +65,7 @@ consulting-auto-factory show-plan
 
 ## Project Structure
 
+- `app.py`: Streamlit web UI (recommended interface)
 - `src/consulting_auto_factory/`
   - `cli.py`: Typer CLI entrypoint
   - `orchestrator.py`: connects agents end-to-end
