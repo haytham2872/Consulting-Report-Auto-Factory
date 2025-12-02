@@ -20,7 +20,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS with provided color palette
+# Custom CSS with updated color palette + gradient background
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -30,9 +30,12 @@ st.markdown("""
         --primary-accent: #2563EB;
         --hero-bg-left: #0F172A;
         --hero-bg-right: #1D4ED8;
-        --page-bg: #F3F4F6;
+        --page-bg-dark: #020617;
+        --page-bg-mid: #0F172A;
+        --page-bg-light: #1D4ED8;
         --card-bg: #FFFFFF;
-        --text-primary: #111827;
+        --surface-alt: #F9FAFB;
+        --text-primary: #0F172A;
         --text-muted: #4B5563;
         --hero-text: #F9FAFB;
         --border-color: #E5E7EB;
@@ -51,24 +54,35 @@ st.markdown("""
         max-width: 1400px;
     }
 
-    /* Page background */
+    /* Animated gradient page background */
     .stApp {
-        background-color: #F3F4F6;
+        background:
+            radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 55%),
+            radial-gradient(circle at bottom right, rgba(8,47,73,0.85), transparent 60%),
+            linear-gradient(135deg, var(--page-bg-dark), var(--page-bg-mid), var(--page-bg-light));
+        background-size: 180% 180%;
+        animation: gradientShift 28s ease-in-out infinite;
     }
 
-    /* Hero header with gradient */
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* Hero header with gradient (kept, but matches page) */
     .main-header {
         background: linear-gradient(135deg, #0F172A 0%, #1D4ED8 100%);
         padding: 2.5rem 2.5rem 2rem 2.5rem;
         border-radius: 12px;
         margin-bottom: 2.5rem;
-        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.2);
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.7);
     }
 
     .header-badge {
         display: inline-block;
-        background: rgba(37, 99, 235, 0.2);
-        color: #60A5FA;
+        background: rgba(37, 99, 235, 0.25);
+        color: #BFDBFE;
         padding: 0.35rem 0.9rem;
         border-radius: 16px;
         font-size: 0.7rem;
@@ -76,7 +90,7 @@ st.markdown("""
         letter-spacing: 0.5px;
         text-transform: uppercase;
         margin-bottom: 1rem;
-        border: 1px solid rgba(96, 165, 250, 0.3);
+        border: 1px solid rgba(96, 165, 250, 0.4);
     }
 
     .main-header h1 {
@@ -88,22 +102,22 @@ st.markdown("""
     }
 
     .main-header p {
-        color: #D1D5DB;
+        color: #E5E7EB;
         margin: 0.5rem 0 0 0;
         font-size: 1rem;
         font-weight: 400;
     }
 
-    /* Section headers */
-    h3 {
-        color: #111827;
+    /* Section headers on dark gradient */
+    h3, .stMarkdown h3 {
+        color: #F9FAFB;
         font-weight: 600;
         font-size: 1.1rem;
         margin-bottom: 0.5rem;
     }
 
     .section-desc {
-        color: #4B5563;
+        color: #CBD5F5;
         font-size: 0.875rem;
         margin-bottom: 1.25rem;
         line-height: 1.5;
@@ -111,15 +125,16 @@ st.markdown("""
 
     /* File uploader - white card */
     [data-testid="stFileUploader"] {
-        background: #FFFFFF !important;
-        border: 2px dashed #E5E7EB !important;
+        background: var(--card-bg) !important;
+        border: 2px dashed var(--border-color) !important;
         border-radius: 10px !important;
         padding: 1.5rem !important;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
     }
 
     [data-testid="stFileUploader"]:hover {
-        border-color: #2563EB !important;
-        background: #F9FAFB !important;
+        border-color: var(--primary-accent) !important;
+        background: var(--surface-alt) !important;
     }
 
     [data-testid="stFileUploader"] section {
@@ -128,57 +143,59 @@ st.markdown("""
     }
 
     [data-testid="stFileUploader"] small {
-        color: #4B5563 !important;
+        color: var(--text-muted) !important;
     }
 
     [data-testid="stFileUploader"] label {
-        color: #111827 !important;
+        color: var(--text-primary) !important;
     }
 
     /* Text area - white card */
     .stTextArea textarea {
-        border: 2px solid #E5E7EB !important;
+        border: 2px solid var(--border-color) !important;
         border-radius: 10px !important;
         font-family: 'Inter', sans-serif !important;
         font-size: 0.9rem !important;
         padding: 1rem !important;
-        background: #FFFFFF !important;
-        color: #111827 !important;
+        background: var(--card-bg) !important;
+        color: var(--text-primary) !important;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
     }
 
     .stTextArea textarea:focus {
-        border-color: #2563EB !important;
-        background: #FFFFFF !important;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+        border-color: var(--primary-accent) !important;
+        background: var(--card-bg) !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25) !important;
     }
 
     .stTextArea label {
-        color: #111827 !important;
+        color: var(--text-primary) !important;
     }
 
     /* Primary buttons with accent color */
     .stButton > button {
-        background: #2563EB !important;
-        color: white !important;
+        background: var(--primary-accent) !important;
+        color: #FFFFFF !important;
         font-weight: 600 !important;
         font-size: 0.95rem !important;
         padding: 0.75rem 2rem !important;
-        border-radius: 8px !important;
+        border-radius: 999px !important;
         border: none !important;
-        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3) !important;
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6) !important;
         transition: all 0.2s ease !important;
     }
 
     .stButton > button:hover {
         background: #1D4ED8 !important;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4) !important;
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.8) !important;
         transform: translateY(-1px) !important;
     }
 
     .stButton > button:disabled {
-        background: #D1D5DB !important;
+        background: #4B5563 !important;
         color: #9CA3AF !important;
         box-shadow: none !important;
+        opacity: 0.5 !important;
     }
 
     /* Success messages */
@@ -188,6 +205,7 @@ st.markdown("""
         border: 1px solid #86EFAC !important;
         border-radius: 8px !important;
         padding: 0.75rem 1rem !important;
+        box-shadow: 0 6px 18px rgba(22, 101, 52, 0.25);
     }
 
     /* Error messages */
@@ -197,19 +215,21 @@ st.markdown("""
         border: 1px solid #FCA5A5 !important;
         border-radius: 8px !important;
         padding: 0.75rem 1rem !important;
+        box-shadow: 0 6px 18px rgba(153, 27, 27, 0.25);
     }
 
     /* Expander */
     .streamlit-expanderHeader {
-        background: #FFFFFF !important;
-        border: 1px solid #E5E7EB !important;
+        background: var(--card-bg) !important;
+        border: 1px solid var(--border-color) !important;
         border-radius: 6px !important;
         font-weight: 500 !important;
-        color: #111827 !important;
+        color: var(--text-primary) !important;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.25);
     }
 
     .streamlit-expanderHeader:hover {
-        background: #F9FAFB !important;
+        background: var(--surface-alt) !important;
         border-color: #D1D5DB !important;
     }
 
@@ -217,42 +237,43 @@ st.markdown("""
     .status-badge {
         display: inline-block;
         padding: 0.6rem 1.25rem;
-        border-radius: 6px;
+        border-radius: 999px;
         font-weight: 600;
         font-size: 0.875rem;
         margin: 0.5rem 0;
     }
 
     .status-success {
-        background: #22C55E;
+        background: var(--success);
         color: #FFFFFF;
     }
 
     .status-processing {
-        background: #F97316;
+        background: var(--warning);
         color: #FFFFFF;
     }
 
     /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.5rem;
-        background: #FFFFFF;
+        background: rgba(15, 23, 42, 0.6);
         padding: 0.4rem;
-        border-radius: 8px;
-        border: 1px solid #E5E7EB;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        backdrop-filter: blur(18px);
     }
 
     .stTabs [data-baseweb="tab"] {
         font-weight: 500;
         font-size: 0.9rem;
-        color: #4B5563;
+        color: #E5E7EB;
         padding: 0.6rem 1.25rem;
-        border-radius: 6px;
+        border-radius: 999px;
     }
 
     .stTabs [data-baseweb="tab"]:hover {
-        background: #F9FAFB;
-        color: #111827;
+        background: rgba(148, 163, 184, 0.25);
+        color: #FFFFFF;
     }
 
     .stTabs [aria-selected="true"] {
@@ -264,43 +285,46 @@ st.markdown("""
     [data-testid="stMetricValue"] {
         font-size: 1.75rem;
         font-weight: 700;
-        color: #111827;
+        color: var(--text-primary);
     }
 
     [data-testid="stMetricLabel"] {
         font-size: 0.75rem;
         font-weight: 600;
-        color: #4B5563;
+        color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
 
     [data-testid="stMetric"] {
-        background: #FFFFFF;
+        background: var(--card-bg);
         padding: 1rem;
         border-radius: 8px;
-        border: 1px solid #E5E7EB;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
     }
 
     /* Progress bar */
     .stProgress > div > div > div > div {
-        background: #2563EB;
+        background: linear-gradient(90deg, #22C55E, #2563EB);
     }
 
     /* Download buttons */
     .stDownloadButton > button {
-        background: #FFFFFF !important;
-        color: #111827 !important;
+        background: rgba(15, 23, 42, 0.85) !important;
+        color: #E5E7EB !important;
         border: 2px solid #2563EB !important;
         font-weight: 600 !important;
         padding: 0.65rem 1.5rem !important;
-        border-radius: 8px !important;
+        border-radius: 999px !important;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.6);
     }
 
     .stDownloadButton > button:hover {
         background: #2563EB !important;
         color: #FFFFFF !important;
         transform: translateY(-1px) !important;
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.8);
     }
 
     /* Hide branding */
@@ -312,39 +336,44 @@ st.markdown("""
     hr {
         margin: 2rem 0;
         border: none;
-        border-top: 1px solid #E5E7EB;
+        border-top: 1px solid rgba(148, 163, 184, 0.65);
     }
 
-    /* Results container */
+    /* Results container - white card for long text */
     .results-container {
-        background: #FFFFFF;
+        background: var(--card-bg);
         padding: 2rem;
-        border-radius: 10px;
-        border: 1px solid #E5E7EB;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.55);
+        color: var(--text-primary);
+    }
+
+    .results-container .stMarkdown {
+        color: var(--text-primary) !important;
     }
 
     /* Tables */
     .dataframe {
-        border: 1px solid #E5E7EB !important;
+        border: 1px solid var(--border-color) !important;
         border-radius: 6px !important;
     }
 
     .dataframe th {
-        background: #F9FAFB !important;
-        color: #111827 !important;
+        background: var(--surface-alt) !important;
+        color: var(--text-primary) !important;
         font-weight: 600 !important;
         font-size: 0.75rem !important;
         text-transform: uppercase !important;
     }
 
     .dataframe td {
-        color: #111827 !important;
+        color: var(--text-primary) !important;
     }
 
-    /* All markdown text */
+    /* Default markdown text on dark background */
     .stMarkdown {
-        color: #111827;
+        color: #E5E7EB;
     }
 
     /* Clean animations */
@@ -451,7 +480,7 @@ if generate_button:
                 st.markdown("""
                 <div style="text-align: center; padding: 2rem;">
                     <div class="status-badge status-processing">Processing Analysis</div>
-                    <p style="color: #4B5563; margin-top: 0.75rem;">AI agents are analyzing your data</p>
+                    <p style="color: #E5E7EB; margin-top: 0.75rem;">AI agents are analyzing your data</p>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -459,7 +488,7 @@ if generate_button:
                 status_text = st.empty()
 
                 try:
-                    status_text.markdown('<p style="text-align: center; color: #4B5563;">Planning Agent: Creating strategy...</p>', unsafe_allow_html=True)
+                    status_text.markdown('<p style="text-align: center; color: #E5E7EB;">Planning Agent: Creating strategy...</p>', unsafe_allow_html=True)
                     progress_bar.progress(25)
 
                     run_pipeline(
@@ -468,10 +497,10 @@ if generate_button:
                         reports_dir=str(reports_dir)
                     )
 
-                    status_text.markdown('<p style="text-align: center; color: #4B5563;">Data Analyst: Computing metrics...</p>', unsafe_allow_html=True)
+                    status_text.markdown('<p style="text-align: center; color: #E5E7EB;">Data Analyst: Computing metrics...</p>', unsafe_allow_html=True)
                     progress_bar.progress(50)
 
-                    status_text.markdown('<p style="text-align: center; color: #4B5563;">Insights Agent: Writing report...</p>', unsafe_allow_html=True)
+                    status_text.markdown('<p style="text-align: center; color: #E5E7EB;">Insights Agent: Writing report...</p>', unsafe_allow_html=True)
                     progress_bar.progress(75)
 
                     status_text.markdown('<p style="text-align: center; color: #22C55E; font-weight: 600;">✓ Complete</p>', unsafe_allow_html=True)
@@ -618,8 +647,8 @@ if st.session_state.report_generated and st.session_state.report_content:
 # Footer
 st.markdown("---")
 st.markdown("""
-<div style="text-align: center; color: #6B7280; padding: 2rem;">
-    <p style="margin: 0; font-weight: 500; color: #111827;">Powered by Claude AI</p>
-    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #4B5563;">Enterprise Business Intelligence · Secure & Confidential</p>
+<div style="text-align: center; color: #E5E7EB; padding: 2rem;">
+    <p style="margin: 0; font-weight: 500; color: #F9FAFB;">Powered by Claude AI</p>
+    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #CBD5F5;">Enterprise Business Intelligence · Secure & Confidential</p>
 </div>
 """, unsafe_allow_html=True)
