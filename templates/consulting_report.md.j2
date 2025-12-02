@@ -1,0 +1,24 @@
+# Consulting Report
+
+> Generated from analysis_summary.json with provenance metadata to ensure parity across artifacts.
+
+## Run Metadata
+- Timestamp: {{ metadata.run_timestamp }}
+- Dataset SHA256: {{ metadata.dataset_sha256 }}
+- Git commit: {{ metadata.git_commit }}
+{% if metadata.model %}- Model: {{ metadata.model }}{% endif %}
+{% if metadata.token_usage %}- Tokens (in/out): {{ metadata.token_usage.input_tokens }}/{{ metadata.token_usage.output_tokens }}{% endif %}
+
+## KPIs
+- Total revenue: {{ kpis.total_revenue | currency }}
+- Average order value: {{ kpis.average_order_value | currency }}
+- Churn rate: {{ kpis.churn_rate | percent }}
+- LTV (mean): {{ kpis.ltv_mean | currency }}
+
+## Top Categories by Revenue
+{% for item in top_categories %}- {{ item.category }}: {{ item.revenue | currency }}
+{% endfor %}
+
+## Charts
+{% for chart in charts %}- {{ chart.title }} ({{ chart.path }})
+{% endfor %}
