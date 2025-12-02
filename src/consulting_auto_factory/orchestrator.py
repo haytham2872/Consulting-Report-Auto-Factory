@@ -28,7 +28,7 @@ def run_pipeline(
     planner = PlannerAgent(model=settings.model, temperature=settings.temperature)
     plan = planner.create_plan(brief, schemas)
 
-    analyst = DataAnalystAgent(reports_dir=settings.reports_dir)
+    analyst = DataAnalystAgent(reports_dir=settings.reports_dir, use_tools=True, model=settings.model)
     analysis_result: AnalysisResult = analyst.run_analysis(plan, dataframes)
     analysis_result.metadata = RunMetadata(
         run_timestamp=datetime.now(timezone.utc).isoformat(),

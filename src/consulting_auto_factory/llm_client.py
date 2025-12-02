@@ -3,10 +3,11 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from dotenv import load_dotenv
 from anthropic import Anthropic
+from anthropic.types import Message
 
 load_dotenv()
 
@@ -49,4 +50,38 @@ def chat_json(
         return json.loads(raw)
     except json.JSONDecodeError as exc:  # pragma: no cover - defensive
         raise ValueError(f"Failed to parse JSON from model response: {exc}\nRaw response: {raw}")
+
+
+def chat_with_tools(
+    system_prompt: str,
+    messages: List[Dict[str, Any]],
+    tools: List[Dict[str, Any]],
+    model: str | None = None,
+    temperature: float = 0.3,
+    max_tokens: int = 4000,
+) -> Message:
+    """
+    Chat with Claude using tool calling.
+
+    Args:
+        system_prompt: System prompt for the model
+        messages: List of message dictionaries with 'role' and 'content'
+        tools: List of tool definitions
+        model: Model to use
+        temperature: Temperature for generation
+        max_tokens: Maximum tokens to generate
+
+    Returns:
+        Anthropic Message object with tool use blocks
+    """
+    client = _client()
+    response = client.messages.create(
+        model=model or DEFAULT_MODEL,
+        system=system_prompt,
+        messages=messages,
+        tools=tools,
+        max_tokens=max_tokens,
+        temperature=temperature,
+    )
+    return response
 
