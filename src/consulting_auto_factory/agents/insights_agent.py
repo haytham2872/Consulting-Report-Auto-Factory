@@ -13,10 +13,9 @@ Return two sections only: 'Executive summary' (2-3 tight paragraphs) and 'Key fi
 
 
 class InsightsAgent:
-    def __init__(self, model: str | None = None, temperature: float = 0.4, allow_fallback: bool = False) -> None:
+    def __init__(self, model: str | None = None, temperature: float = 0.4) -> None:
         self.model = model
         self.temperature = temperature
-        self.allow_fallback = allow_fallback
 
     @staticmethod
     def _format_number(value: float) -> str:
@@ -74,7 +73,6 @@ class InsightsAgent:
             meta = analysis_result.metadata
             lines.append(f"- Timestamp (UTC): {meta.run_timestamp}")
             lines.append(f"- Model: {meta.model} @ temperature {meta.temperature}")
-            lines.append(f"- Offline fallback: {meta.offline}")
             if meta.input_files:
                 lines.append("- Input files:")
                 for f in meta.input_files:
@@ -83,13 +81,7 @@ class InsightsAgent:
 
     def generate_report(self, brief: str, analysis_result: AnalysisResult) -> str:
         user = self._format_inputs(brief, analysis_result)
-        try:
-            narrative = llm_client.chat(REPORT_PROMPT, user, model=self.model, temperature=self.temperature, max_tokens=500)
-        except Exception:
-            if not self.allow_fallback:
-                raise
-            # offline fallback
-            narrative = "## Executive summary\nOffline mode enabled.\n\n## Key findings\n- Deterministic summary generated without LLM."
+        narrative = llm_client.chat(REPORT_PROMPT, user, model=self.model, temperature=self.temperature, max_tokens=500)
 
         sections: List[str] = ["# Consulting Report"]
         sections.extend(self._render_metadata(analysis_result))

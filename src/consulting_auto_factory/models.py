@@ -77,5 +77,4 @@ class RunMetadata(BaseModel):
     run_timestamp: str
     model: str
     temperature: float
-    offline: bool
     input_files: List[InputFileProfile] = Field(default_factory=list)

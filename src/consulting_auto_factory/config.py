@@ -12,7 +12,6 @@ class Settings(BaseModel):
     reports_dir: Path = Path("reports")
     input_dir: Path = Path("data/input")
     brief_path: Path = Path("config/business_brief.txt")
-    offline: bool = Field(default=False, description="Allow deterministic offline fallbacks instead of calling the Anthropic API")
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
 

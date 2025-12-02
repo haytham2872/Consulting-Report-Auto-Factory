@@ -25,7 +25,7 @@ pip install -e .
 cp .env.example .env  # and set ANTHROPIC_API_KEY
 ```
 
-The editable install registers the `consulting-auto-factory` CLI used in the commands below. By default the agents call Anthropic Claude (cost-effective `claude-3-haiku-20240307` unless you override `CONSULTING_FACTORY_MODEL`). If `ANTHROPIC_API_KEY` is missing the commands will fail unless you explicitly opt into offline fallbacks.
+The editable install registers the `consulting-auto-factory` CLI used in the commands below. By default the agents call Anthropic Claude (cost-effective `claude-3-haiku-20240307` unless you override `CONSULTING_FACTORY_MODEL`). Set `ANTHROPIC_API_KEY` before running commands.
 
 Generate the sample dataset (already committed, but you can refresh it):
 
@@ -38,11 +38,7 @@ Run the full pipeline:
 ```bash
 consulting-auto-factory run --input-dir data/input --brief config/business_brief.txt --reports-dir reports
 
-# When you cannot reach the API, use deterministic offline fallbacks (no LLM calls):
-# consulting-auto-factory run --offline
 ```
-
-Offline fallback keeps the same computed KPIs/tables/charts and metadata, but the executive summary/key findings are deterministic stubs (no Claude call).
 
 Outputs appear under `reports/`:
 - `analysis_summary.json`: structured KPIs, plan, tables, charts, and run metadata (timestamp, model, input file digests)
