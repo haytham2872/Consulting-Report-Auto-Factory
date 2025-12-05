@@ -1,14 +1,34 @@
 from __future__ import annotations
 
-from typing import List
+from typing import List, Dict, Optional
 
 from .. import llm_client
-from ..models import AnalysisResult, KPI, NamedTable
+from ..models import AnalysisResult, KPI, NamedTable, ColumnRole
 
 
-REPORT_PROMPT = """You are a consulting analyst who writes crisp Markdown reports.
-Use only the provided quantitative facts and do not invent new numbers.
-Return two sections only: 'Executive summary' (2-3 tight paragraphs) and 'Key findings' (3-5 bullets).
+REPORT_PROMPT = """You are a data analyst writing concise, generic insights from tabular data analysis.
+
+You will receive:
+1. A business brief (context)
+2. Column roles (measure/dimension/time/text) showing what each column represents structurally
+3. Quantitative facts (KPIs and tables)
+
+CRITICAL RULES:
+1. Use ONLY the provided quantitative facts - do NOT invent numbers
+2. Structure insights around column roles:
+   - "Measures" for numeric metrics/quantities
+   - "Dimensions" for categorical groupings
+   - "Time columns" for temporal patterns
+3. Stay domain-agnostic: use role terminology unless the brief provides specific business terms
+4. Keep it concise: 2-3 tight paragraphs for executive summary, 3-5 bullets for key findings
+5. Focus on the strongest patterns and contrasts in the data
+6. Reference actual column names when discussing specific findings
+
+Return exactly TWO sections:
+- Executive summary (2-3 paragraphs)
+- Key findings (3-5 bullet points)
+
+Write in a professional consulting style but remain generic and data-driven.
 """
 
 
@@ -21,13 +41,43 @@ class InsightsAgent:
     def _format_number(value: float) -> str:
         return f"{value:,.2f}" if abs(value) >= 1 else f"{value:.4f}"
 
-    def _format_inputs(self, brief: str, analysis_result: AnalysisResult) -> str:
-        lines: List[str] = ["Business brief:", brief, "\nData facts (use exactly):"]
+    def _format_column_roles(self, column_roles: Optional[Dict[str, Dict[str, ColumnRole]]]) -> str:
+        """Format column roles compactly."""
+        if not column_roles:
+            return "No column role information available."
+
+        lines = ["Column roles:"]
+        for filename, roles in column_roles.items():
+            role_groups: Dict[str, List[str]] = {"measure": [], "dimension": [], "time": [], "text": []}
+            for col_name, role_info in roles.items():
+                if role_info.role in role_groups:
+                    role_groups[role_info.role].append(col_name)
+
+            parts = []
+            for role, cols in role_groups.items():
+                if cols:
+                    parts.append(f"{role}s: {', '.join(cols)}")
+            if parts:
+                lines.append(f"  {filename}: {' | '.join(parts)}")
+
+        return "\n".join(lines)
+
+    def _format_inputs(
+        self, brief: str, analysis_result: AnalysisResult, column_roles: Optional[Dict[str, Dict[str, ColumnRole]]]
+    ) -> str:
+        lines: List[str] = [
+            "Business brief:",
+            brief,
+            "",
+            self._format_column_roles(column_roles),
+            "",
+            "Quantitative facts (use exactly):",
+        ]
         for kpi in analysis_result.kpis:
             lines.append(f"- {kpi.name}: {self._format_number(kpi.value)} ({kpi.explanation})")
         lines.append("\nTables:")
         for table in analysis_result.tables:
-            lines.append(f"- {table.title} with columns {table.columns}")
+            lines.append(f"- {table.title} with columns: {', '.join(table.columns)}")
         return "\n".join(lines)
 
     def _render_kpis(self, kpis: List[KPI]) -> List[str]:
@@ -47,8 +97,6 @@ class InsightsAgent:
                 rendered.append(f"_Note: {table.description}_")
             rendered.append("")
         return rendered
-
-
 
     def build_data_facts(self, analysis_result: AnalysisResult) -> str:
         facts = []
@@ -70,9 +118,12 @@ class InsightsAgent:
                     lines.append(f"  - {f.filename}: rows={f.rows}, cols={f.columns}, sha256={f.sha256[:12]}…")
         return lines
 
-    def generate_report(self, brief: str, analysis_result: AnalysisResult) -> str:
-        user = self._format_inputs(brief, analysis_result)
-        narrative = llm_client.chat(REPORT_PROMPT, user, model=self.model, temperature=self.temperature, max_tokens=500)
+    def generate_report(
+        self, brief: str, analysis_result: AnalysisResult, column_roles: Optional[Dict[str, Dict[str, ColumnRole]]] = None
+    ) -> str:
+        """Generate a role-aware consulting report."""
+        user = self._format_inputs(brief, analysis_result, column_roles)
+        narrative = llm_client.chat(REPORT_PROMPT, user, model=self.model, temperature=self.temperature, max_tokens=600)
 
         sections: List[str] = ["# Consulting Report"]
         sections.extend(self._render_metadata(analysis_result))
@@ -84,7 +135,7 @@ class InsightsAgent:
             sections.append("\n## Tables")
             sections.extend(self._render_tables(analysis_result.tables))
         sections.append("\n## Recommended actions")
-        sections.append("- Prioritize initiatives indicated by the strongest KPIs.")
+        sections.append("- Prioritize initiatives indicated by the strongest patterns in measures.")
+        sections.append("- Investigate temporal trends and dimensional segments for opportunities.")
         sections.append("- Validate findings with stakeholders and refine analysis as needed.")
         return "\n".join(sections)
-

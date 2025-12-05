@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -38,12 +38,20 @@ class NamedTable(BaseModel):
     description: Optional[str] = None
 
 
+class ColumnRole(BaseModel):
+    """Role assignment for a column."""
+    column_name: str
+    role: str  # 'measure', 'dimension', 'time', 'text'
+    dtype: str  # 'numeric', 'categorical', 'datetime', 'text'
+
+
 class AnalysisResult(BaseModel):
     plan: AnalysisPlan
     kpis: List[KPI] = Field(default_factory=list)
     tables: List[NamedTable] = Field(default_factory=list)
     notes: Optional[str] = None
     metadata: Optional["RunMetadata"] = None
+    column_roles: Optional[Dict[str, ColumnRole]] = None  # filename -> column -> role mapping
 
 
 class InputFileProfile(BaseModel):
