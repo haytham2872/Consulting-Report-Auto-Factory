@@ -50,8 +50,14 @@ class InsightsAgent:
         for filename, roles in column_roles.items():
             role_groups: Dict[str, List[str]] = {"measure": [], "dimension": [], "time": [], "text": []}
             for col_name, role_info in roles.items():
-                if role_info.role in role_groups:
-                    role_groups[role_info.role].append(col_name)
+                # role_info may be a ColumnRole instance or a plain dict (when loaded from JSON)
+                if isinstance(role_info, dict):
+                    role = role_info.get("role")
+                else:
+                    role = getattr(role_info, "role", None)
+
+                if role in role_groups:
+                    role_groups[role].append(col_name)
 
             parts = []
             for role, cols in role_groups.items():

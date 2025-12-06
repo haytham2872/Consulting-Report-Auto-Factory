@@ -8,7 +8,7 @@ import tempfile
 import json
 from pathlib import Path
 from datetime import datetime
-import shutil
+import shutil  # kept in case you use it elsewhere
 
 from src.consulting_auto_factory.orchestrator import run_pipeline
 from src.consulting_auto_factory.agents.qa_agent import QAAgent
@@ -23,7 +23,8 @@ st.set_page_config(
 )
 
 # Custom CSS with updated color palette + gradient background
-st.markdown("""
+st.markdown(
+    """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -148,7 +149,10 @@ st.markdown("""
         color: var(--text-muted) !important;
     }
 
-    [data-testid="stFileUploader"] label {
+    /* Ensure all file-uploader text is visible */
+    [data-testid="stFileUploader"] label,
+    [data-testid="stFileUploader"] p,
+    [data-testid="stFileUploader"] span {
         color: var(--text-primary) !important;
     }
 
@@ -220,19 +224,38 @@ st.markdown("""
         box-shadow: 0 6px 18px rgba(153, 27, 27, 0.25);
     }
 
-    /* Expander */
-    .streamlit-expanderHeader {
+    /* Expander (Analysis Plan, KPIs, Data Tables, View files, etc.) */
+    [data-testid="stExpander"] {
         background: var(--card-bg) !important;
         border: 1px solid var(--border-color) !important;
-        border-radius: 6px !important;
-        font-weight: 500 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.45);
+        margin-bottom: 0.75rem;
         color: var(--text-primary) !important;
-        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.25);
     }
 
-    .streamlit-expanderHeader:hover {
-        background: var(--surface-alt) !important;
-        border-color: #D1D5DB !important;
+    /* Header row (title + arrow) */
+    [data-testid="stExpander"] summary {
+        color: var(--text-primary) !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+    }
+
+    /* Arrow icon */
+    [data-testid="stExpander"] summary svg {
+        color: var(--text-primary) !important;
+    }
+
+    /* Content inside expanders */
+    [data-testid="stExpander"] .stMarkdown,
+    [data-testid="stExpander"] p,
+    [data-testid="stExpander"] strong {
+        color: var(--text-primary) !important;
+    }
+
+    /* Spinner / processing text should be white to contrast the dark background */
+    .stSpinner, .stSpinner div, .stSpinner span, .stSpinner p {
+        color: var(--hero-text) !important;
     }
 
     /* Status badges */
@@ -468,40 +491,48 @@ st.markdown("""
         margin-top: 1.5rem;
     }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # Initialize session state
-if 'report_generated' not in st.session_state:
+if "report_generated" not in st.session_state:
     st.session_state.report_generated = False
-if 'report_content' not in st.session_state:
+if "report_content" not in st.session_state:
     st.session_state.report_content = None
-if 'analysis_data' not in st.session_state:
+if "analysis_data" not in st.session_state:
     st.session_state.analysis_data = None
-if 'qa_history' not in st.session_state:
+if "qa_history" not in st.session_state:
     st.session_state.qa_history = []
 
 # Hero Header
-st.markdown("""
+st.markdown(
+    """
 <div class="main-header">
     <div class="header-badge">AI-Powered Intelligence</div>
     <h1>Consulting Report Auto-Factory</h1>
     <p>Transform business data into executive insights using multi-agent AI</p>
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # Main content
 col1, col2 = st.columns([1, 1], gap="large")
 
 with col1:
     st.markdown("### Data Upload")
-    st.markdown('<p class="section-desc">Upload CSV files containing your business data</p>', unsafe_allow_html=True)
+    st.markdown(
+        '<p class="section-desc">Upload CSV files containing your business data</p>',
+        unsafe_allow_html=True,
+    )
 
     uploaded_files = st.file_uploader(
         "Drag and drop CSV files here",
-        type=['csv'],
+        type=["csv"],
         accept_multiple_files=True,
         help="Upload CSV files with your business data",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
     )
 
     if uploaded_files:
@@ -512,16 +543,22 @@ with col1:
 
 with col2:
     st.markdown("### Business Brief")
-    st.markdown('<p class="section-desc">Describe your analysis objectives and business context</p>', unsafe_allow_html=True)
+    st.markdown(
+        '<p class="section-desc">Describe your analysis objectives and business context</p>',
+        unsafe_allow_html=True,
+    )
 
     business_brief = st.text_area(
         "Enter your business brief",
-        value="""We are an e-commerce retailer operating in Europe and North America.
-This dataset contains orders over the past 18 months and a customer table.
-We want to understand revenue trends, top segments, churn patterns, and identify opportunities to increase customer lifetime value.""",
+        value=(
+            "We are an e-commerce retailer operating in Europe and North America.\n"
+            "This dataset contains orders over the past 18 months and a customer table.\n"
+            "We want to understand revenue trends, top segments, churn patterns, "
+            "and identify opportunities to increase customer lifetime value."
+        ),
         height=200,
         help="Describe your business and what insights you need",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
     )
 
 # Action button
@@ -532,7 +569,7 @@ with col_btn2:
         "Generate Executive Report",
         type="primary",
         use_container_width=True,
-        disabled=not uploaded_files or not business_brief
+        disabled=not uploaded_files or not business_brief,
     )
 
 # Process and display results
@@ -561,33 +598,48 @@ if generate_button:
 
             # Processing
             with st.spinner(""):
-                st.markdown("""
+                st.markdown(
+                    """
                 <div style="text-align: center; padding: 2rem;">
                     <div class="status-badge status-processing">Processing Analysis</div>
                     <p style="color: #E5E7EB; margin-top: 0.75rem;">AI agents are analyzing your data</p>
                 </div>
-                """, unsafe_allow_html=True)
+                """,
+                    unsafe_allow_html=True,
+                )
 
                 progress_bar = st.progress(0)
                 status_text = st.empty()
 
                 try:
-                    status_text.markdown('<p style="text-align: center; color: #E5E7EB;">Planning Agent: Creating strategy...</p>', unsafe_allow_html=True)
+                    status_text.markdown(
+                        '<p style="text-align: center; color: #E5E7EB;">Planning Agent: Creating strategy...</p>',
+                        unsafe_allow_html=True,
+                    )
                     progress_bar.progress(25)
 
                     run_pipeline(
                         input_dir=str(input_dir),
                         brief_path=str(brief_path),
-                        reports_dir=str(reports_dir)
+                        reports_dir=str(reports_dir),
                     )
 
-                    status_text.markdown('<p style="text-align: center; color: #E5E7EB;">Data Analyst: Computing metrics...</p>', unsafe_allow_html=True)
+                    status_text.markdown(
+                        '<p style="text-align: center; color: #E5E7EB;">Data Analyst: Computing metrics...</p>',
+                        unsafe_allow_html=True,
+                    )
                     progress_bar.progress(50)
 
-                    status_text.markdown('<p style="text-align: center; color: #E5E7EB;">Insights Agent: Writing report...</p>', unsafe_allow_html=True)
+                    status_text.markdown(
+                        '<p style="text-align: center; color: #E5E7EB;">Insights Agent: Writing report...</p>',
+                        unsafe_allow_html=True,
+                    )
                     progress_bar.progress(75)
 
-                    status_text.markdown('<p style="text-align: center; color: #22C55E; font-weight: 600;">✓ Complete</p>', unsafe_allow_html=True)
+                    status_text.markdown(
+                        '<p style="text-align: center; color: #22C55E; font-weight: 600;">✓ Complete</p>',
+                        unsafe_allow_html=True,
+                    )
                     progress_bar.progress(100)
 
                     # Load results
@@ -614,63 +666,83 @@ if generate_button:
 # Display results
 if st.session_state.report_generated and st.session_state.report_content:
     st.markdown("---")
-    st.markdown('<div class="status-badge status-success">✓ Report Generated</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="status-badge status-success">✓ Report Generated</div>',
+        unsafe_allow_html=True,
+    )
 
     tab1, tab2, tab3 = st.tabs(["Executive Report", "Analytics Dashboard", "Export"])
 
     with tab1:
         st.markdown('<div class="results-container">', unsafe_allow_html=True)
         st.markdown(st.session_state.report_content)
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
     with tab2:
         if st.session_state.analysis_data:
             st.markdown("### Analysis Overview")
 
             # Metadata
-            if 'metadata' in st.session_state.analysis_data:
-                metadata = st.session_state.analysis_data['metadata']
+            if "metadata" in st.session_state.analysis_data:
+                metadata = st.session_state.analysis_data["metadata"]
                 col1, col2, col3 = st.columns(3)
                 with col1:
-                    model = metadata.get('model', 'N/A').replace('claude-3-', '').replace('-20240307', '').title()
+                    model = (
+                        metadata.get("model", "N/A")
+                        .replace("claude-3-", "")
+                        .replace("-20240307", "")
+                        .title()
+                    )
                     st.metric("Model", model)
                 with col2:
                     st.metric("Temperature", f"{metadata.get('temperature', 'N/A')}")
                 with col3:
-                    if 'run_timestamp' in metadata:
-                        ts = datetime.fromisoformat(metadata['run_timestamp'])
+                    if "run_timestamp" in metadata:
+                        ts = datetime.fromisoformat(metadata["run_timestamp"])
                         st.metric("Generated", ts.strftime("%Y-%m-%d %H:%M"))
 
             st.markdown("")
 
             # Plan
-            if 'plan' in st.session_state.analysis_data:
+            if "plan" in st.session_state.analysis_data:
                 with st.expander("Analysis Plan", expanded=True):
-                    plan = st.session_state.analysis_data['plan']
+                    plan = st.session_state.analysis_data["plan"]
                     st.markdown(f"**{plan.get('title', 'Plan')}**")
                     st.markdown("**Objectives:**")
-                    for obj in plan.get('objectives', []):
+                    for obj in plan.get("objectives", []):
                         st.markdown(f"• {obj}")
 
             # KPIs
-            if 'kpis' in st.session_state.analysis_data:
+            if "kpis" in st.session_state.analysis_data:
                 with st.expander("Key Performance Indicators", expanded=True):
-                    kpis = st.session_state.analysis_data['kpis']
+                    kpis = st.session_state.analysis_data["kpis"]
 
                     if kpis and isinstance(kpis, list):
                         cols = st.columns(min(3, len(kpis)))
 
                         for idx, kpi in enumerate(kpis):
                             with cols[idx % len(cols)]:
-                                name = kpi.get('name', 'Unknown')
-                                value = kpi.get('value', 0)
-                                explanation = kpi.get('explanation', '')
+                                name = kpi.get("name", "Unknown")
+                                value = kpi.get("value", 0)
+                                explanation = kpi.get("explanation", "")
 
                                 # Format value
                                 if isinstance(value, (int, float)):
-                                    if any(w in name.lower() for w in ['revenue', 'amount', 'value', 'price', 'cost']):
+                                    if any(
+                                        w in name.lower()
+                                        for w in [
+                                            "revenue",
+                                            "amount",
+                                            "value",
+                                            "price",
+                                            "cost",
+                                        ]
+                                    ):
                                         formatted = f"${value:,.2f}"
-                                    elif any(w in name.lower() for w in ['rate', 'percent', '%']):
+                                    elif any(
+                                        w in name.lower()
+                                        for w in ["rate", "percent", "%"]
+                                    ):
                                         formatted = f"{value:.1f}%"
                                     elif value > 1000:
                                         formatted = f"{value:,.0f}"
@@ -682,19 +754,22 @@ if st.session_state.report_generated and st.session_state.report_content:
                                 st.metric(label=name, value=formatted, help=explanation)
 
             # Tables
-            if 'tables' in st.session_state.analysis_data:
+            if "tables" in st.session_state.analysis_data:
                 with st.expander("Data Tables", expanded=False):
-                    for table in st.session_state.analysis_data['tables']:
+                    for table in st.session_state.analysis_data["tables"]:
                         st.markdown(f"**{table.get('title', 'Table')}**")
-                        if table.get('description'):
-                            st.caption(table['description'])
+                        if table.get("description"):
+                            st.caption(table["description"])
 
-                        if 'columns' in table and 'rows' in table:
+                        if "columns" in table and "rows" in table:
                             import pandas as pd
-                            df = pd.DataFrame(table['rows'], columns=table['columns'])
+
+                            df = pd.DataFrame(
+                                table["rows"], columns=table["columns"]
+                            )
                             st.dataframe(df, use_container_width=True)
                         else:
-                            st.json(table.get('data', {}))
+                            st.json(table.get("data", {}))
 
             # Raw JSON
             with st.expander("Raw JSON", expanded=False):
@@ -702,7 +777,10 @@ if st.session_state.report_generated and st.session_state.report_content:
 
     with tab3:
         st.markdown("### Export Reports")
-        st.markdown('<p class="section-desc">Download your analysis in multiple formats</p>', unsafe_allow_html=True)
+        st.markdown(
+            '<p class="section-desc">Download your analysis in multiple formats</p>',
+            unsafe_allow_html=True,
+        )
 
         col1, col2 = st.columns(2, gap="large")
 
@@ -714,7 +792,7 @@ if st.session_state.report_generated and st.session_state.report_content:
                 data=st.session_state.report_content,
                 file_name=f"report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
                 mime="text/markdown",
-                use_container_width=True
+                use_container_width=True,
             )
 
         with col2:
@@ -726,37 +804,49 @@ if st.session_state.report_generated and st.session_state.report_content:
                     data=json.dumps(st.session_state.analysis_data, indent=2),
                     file_name=f"analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
                     mime="application/json",
-                    use_container_width=True
+                    use_container_width=True,
                 )
 
     # Q&A Section - Interactive follow-up questions
     st.markdown("---")
-    st.markdown("""
+    st.markdown(
+        """
     <div class="qa-section">
         <div class="qa-header">💬 Ask Follow-Up Questions</div>
         <div class="qa-subheader">Get instant answers about your analysis using AI</div>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
     # Q&A History Display (if any)
     if st.session_state.qa_history:
-        st.markdown('<div class="qa-section" style="margin-top: 1rem; padding-top: 1rem;">', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="qa-section" style="margin-top: 1rem; padding-top: 1rem;">',
+            unsafe_allow_html=True,
+        )
         for qa in reversed(st.session_state.qa_history):  # Show most recent first
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div class="qa-pair">
                 <div class="qa-question">{qa['question']}</div>
                 <div class="qa-answer">{qa['answer']}</div>
             </div>
-            """, unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # Q&A Input
     with st.form("qa_form", clear_on_submit=True):
         question = st.text_input(
             "Your question:",
-            placeholder="e.g., What are the main drivers of revenue growth? Which segment shows the most promise?",
+            placeholder=(
+                "e.g., What are the main drivers of revenue growth? "
+                "Which segment shows the most promise?"
+            ),
             help="Ask questions about the analysis results, KPIs, or trends",
-            label_visibility="collapsed"
+            label_visibility="collapsed",
         )
 
         col1, col2, col3 = st.columns([3, 1, 3])
@@ -764,7 +854,7 @@ if st.session_state.report_generated and st.session_state.report_content:
             ask_button = st.form_submit_button("Ask", use_container_width=True)
 
     # Handle Q&A submission
-    if ask_button:
+    if "ask_button" in locals() and ask_button:
         if not question or not question.strip():
             st.warning("⚠️ Please enter a question first")
         else:
@@ -774,7 +864,9 @@ if st.session_state.report_generated and st.session_state.report_content:
                     analysis_result = AnalysisResult(**st.session_state.analysis_data)
 
                     # Get column roles if available
-                    column_roles = st.session_state.analysis_data.get('column_roles', None)
+                    column_roles = st.session_state.analysis_data.get(
+                        "column_roles", None
+                    )
 
                     # Initialize QA agent
                     qa_agent = QAAgent()
@@ -783,15 +875,17 @@ if st.session_state.report_generated and st.session_state.report_content:
                     answer = qa_agent.answer_question(
                         question=question,
                         analysis_result=analysis_result,
-                        column_roles=column_roles
+                        column_roles=column_roles,
                     )
 
                     # Add to history
-                    st.session_state.qa_history.append({
-                        'question': question,
-                        'answer': answer,
-                        'timestamp': datetime.now().isoformat()
-                    })
+                    st.session_state.qa_history.append(
+                        {
+                            "question": question,
+                            "answer": answer,
+                            "timestamp": datetime.now().isoformat(),
+                        }
+                    )
 
                     # Rerun to show new Q&A
                     st.rerun()
@@ -802,9 +896,12 @@ if st.session_state.report_generated and st.session_state.report_content:
 
 # Footer
 st.markdown("---")
-st.markdown("""
+st.markdown(
+    """
 <div style="text-align: center; color: #E5E7EB; padding: 2rem;">
     <p style="margin: 0; font-weight: 500; color: #F9FAFB;">Powered by Claude AI</p>
     <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #CBD5F5;">Enterprise Business Intelligence · Secure & Confidential</p>
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)

@@ -50,10 +50,16 @@ class QAAgent:
         if column_roles:
             lines.append("\nData structure:")
             for filename, roles in column_roles.items():
-                role_groups: Dict[str, list[str]] = {"measure": [], "dimension": [], "time": []}
+                role_groups: Dict[str, list[str]] = {"measure": [], "dimension": [], "time": [], "text": []}
                 for col_name, role_info in roles.items():
-                    if role_info.role in role_groups:
-                        role_groups[role_info.role].append(col_name)
+                    # role_info may be a ColumnRole instance or a plain dict (when loaded from JSON)
+                    if isinstance(role_info, dict):
+                        role = role_info.get("role")
+                    else:
+                        role = getattr(role_info, "role", None)
+
+                    if role in role_groups:
+                        role_groups[role].append(col_name)
 
                 parts = []
                 for role, cols in role_groups.items():
@@ -122,7 +128,7 @@ Provide a concise, professional answer based only on the analysis results shown 
         # Call LLM
         answer = llm_client.chat(
             system_prompt=QA_PROMPT,
-            user_message=user_message,
+            user_content=user_message,
             model=self.model,
             temperature=self.temperature,
             max_tokens=self.max_tokens,
