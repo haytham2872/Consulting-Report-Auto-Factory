@@ -11,6 +11,8 @@ from datetime import datetime
 import shutil
 
 from src.consulting_auto_factory.orchestrator import run_pipeline
+from src.consulting_auto_factory.agents.qa_agent import QAAgent
+from src.consulting_auto_factory.models import AnalysisResult
 
 # Page configuration
 st.set_page_config(
@@ -385,6 +387,86 @@ st.markdown("""
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Q&A Section */
+    .qa-section {
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.55);
+        margin-top: 2rem;
+    }
+
+    .qa-header {
+        color: var(--text-primary);
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .qa-subheader {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .qa-pair {
+        background: var(--surface-alt);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(-10px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .qa-question {
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .qa-question::before {
+        content: "Q:";
+        position: absolute;
+        left: 0;
+        color: var(--primary-accent);
+        font-weight: 700;
+    }
+
+    .qa-answer {
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        padding-left: 1.5rem;
+        position: relative;
+        border-left: 3px solid var(--primary-accent);
+        padding-top: 0.25rem;
+    }
+
+    .qa-answer::before {
+        content: "A:";
+        position: absolute;
+        left: -1.5rem;
+        top: 0.25rem;
+        color: var(--success);
+        font-weight: 700;
+    }
+
+    .qa-input-container {
+        margin-top: 1.5rem;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -395,6 +477,8 @@ if 'report_content' not in st.session_state:
     st.session_state.report_content = None
 if 'analysis_data' not in st.session_state:
     st.session_state.analysis_data = None
+if 'qa_history' not in st.session_state:
+    st.session_state.qa_history = []
 
 # Hero Header
 st.markdown("""
@@ -519,6 +603,7 @@ if generate_button:
                             st.session_state.analysis_data = json.load(f)
 
                     st.session_state.report_generated = True
+                    st.session_state.qa_history = []  # Clear Q&A history for new report
                     st.rerun()
 
                 except Exception as e:
@@ -643,6 +728,77 @@ if st.session_state.report_generated and st.session_state.report_content:
                     mime="application/json",
                     use_container_width=True
                 )
+
+    # Q&A Section - Interactive follow-up questions
+    st.markdown("---")
+    st.markdown("""
+    <div class="qa-section">
+        <div class="qa-header">💬 Ask Follow-Up Questions</div>
+        <div class="qa-subheader">Get instant answers about your analysis using AI</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Q&A History Display (if any)
+    if st.session_state.qa_history:
+        st.markdown('<div class="qa-section" style="margin-top: 1rem; padding-top: 1rem;">', unsafe_allow_html=True)
+        for qa in reversed(st.session_state.qa_history):  # Show most recent first
+            st.markdown(f"""
+            <div class="qa-pair">
+                <div class="qa-question">{qa['question']}</div>
+                <div class="qa-answer">{qa['answer']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Q&A Input
+    with st.form("qa_form", clear_on_submit=True):
+        question = st.text_input(
+            "Your question:",
+            placeholder="e.g., What are the main drivers of revenue growth? Which segment shows the most promise?",
+            help="Ask questions about the analysis results, KPIs, or trends",
+            label_visibility="collapsed"
+        )
+
+        col1, col2, col3 = st.columns([3, 1, 3])
+        with col2:
+            ask_button = st.form_submit_button("Ask", use_container_width=True)
+
+    # Handle Q&A submission
+    if ask_button:
+        if not question or not question.strip():
+            st.warning("⚠️ Please enter a question first")
+        else:
+            with st.spinner("🤔 Analyzing your question..."):
+                try:
+                    # Convert analysis_data dict to AnalysisResult object
+                    analysis_result = AnalysisResult(**st.session_state.analysis_data)
+
+                    # Get column roles if available
+                    column_roles = st.session_state.analysis_data.get('column_roles', None)
+
+                    # Initialize QA agent
+                    qa_agent = QAAgent()
+
+                    # Get answer
+                    answer = qa_agent.answer_question(
+                        question=question,
+                        analysis_result=analysis_result,
+                        column_roles=column_roles
+                    )
+
+                    # Add to history
+                    st.session_state.qa_history.append({
+                        'question': question,
+                        'answer': answer,
+                        'timestamp': datetime.now().isoformat()
+                    })
+
+                    # Rerun to show new Q&A
+                    st.rerun()
+
+                except Exception as e:
+                    st.error(f"❌ Error processing question: {str(e)}")
+                    st.exception(e)
 
 # Footer
 st.markdown("---")
