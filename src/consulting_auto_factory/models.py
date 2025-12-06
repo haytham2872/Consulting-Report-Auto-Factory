@@ -51,7 +51,7 @@ class AnalysisResult(BaseModel):
     tables: List[NamedTable] = Field(default_factory=list)
     notes: Optional[str] = None
     metadata: Optional["RunMetadata"] = None
-    column_roles: Optional[Dict[str, ColumnRole]] = None  # filename -> column -> role mapping
+    column_roles: Optional[Dict[str, Dict[str, ColumnRole]]] = None  # filename -> column_name -> ColumnRole
 
 
 class InputFileProfile(BaseModel):
