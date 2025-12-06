@@ -505,6 +505,177 @@ if "analysis_data" not in st.session_state:
 if "qa_history" not in st.session_state:
     st.session_state.qa_history = []
 
+
+# Quick Test Data Generator (DEV ONLY - REMOVE BEFORE PRODUCTION)
+def generate_mock_analysis():
+    """Generate mock analysis data for UI testing without consuming tokens."""
+    from datetime import datetime
+
+    mock_report = """# Consulting Report
+
+## Run metadata
+- Timestamp (UTC): 2025-01-15T10:30:00Z
+- Model: claude-3-haiku-20240307 @ temperature 0.3
+- Input files:
+  - sample_sales.csv: rows=500, cols=8, sha256=abc123def456...
+  - sample_customers.csv: rows=200, cols=5, sha256=def789ghi012...
+
+## Executive summary
+
+The analysis reveals strong performance across key business metrics with significant growth opportunities in specific market segments. Revenue trends show consistent month-over-month growth averaging 12%, with the Premium segment demonstrating exceptional lifetime value at $4,200 per customer.
+
+Product category analysis indicates Electronics and Home Goods as primary revenue drivers, contributing 65% of total sales volume. However, customer churn analysis reveals concerning patterns in the Budget segment, with a 28% churn rate requiring immediate strategic intervention.
+
+Temporal patterns suggest seasonal peaks in Q4, with notable underperformance in February and March, presenting opportunities for targeted promotional campaigns during these periods.
+
+## Key findings
+- Revenue growth averaging 12% month-over-month demonstrates strong market momentum
+- Premium segment customers show 3.2x higher lifetime value compared to Budget segment
+- Top 3 product categories account for 65% of total revenue, indicating healthy concentration
+- Customer churn rate of 18% overall, with Budget segment showing critically high 28% churn
+- Q4 consistently outperforms other quarters by 35-40% in revenue generation
+
+## Data highlights
+- Total Revenue: $2,450,000.00 — Sum of all transaction amounts across the analysis period
+- Average Order Value: $186.50 — Mean transaction value per order
+- Customer Lifetime Value: $3,250.00 — Average revenue generated per customer over their lifetime
+- Monthly Growth Rate: 12.00% — Average month-over-month revenue increase
+- Customer Churn Rate: 18.00% — Percentage of customers who discontinued purchases
+- Top Category Revenue Share: 34.00% — Percentage contribution of the highest-grossing category
+- Premium Segment Size: 450 — Number of customers in the premium tier
+- Active Products: 127 — Count of products with at least one sale
+
+## Tables
+
+### Revenue by Product Category
+Category | Revenue | Orders | Avg Order Value
+--- | --- | --- | ---
+Electronics | $835,000 | 3,240 | $257.72
+Home Goods | $612,500 | 2,890 | $211.94
+Apparel | $441,250 | 3,120 | $141.43
+Sports Equipment | $327,800 | 1,450 | $226.07
+Books & Media | $233,450 | 1,890 | $123.52
+_Note: Top 5 categories by revenue contribution_
+
+### Customer Segmentation Analysis
+Segment | Customer Count | Avg LTV | Churn Rate | Revenue Share
+--- | --- | --- | --- | ---
+Premium | 450 | $4,200 | 8% | 42%
+Standard | 1,240 | $2,850 | 15% | 48%
+Budget | 680 | $1,320 | 28% | 10%
+_Note: Customer distribution across value tiers_
+
+### Monthly Revenue Trend
+Month | Revenue | Orders | Growth %
+--- | --- | --- | ---
+2024-09 | $185,000 | 890 | --
+2024-10 | $208,400 | 1,020 | 12.6%
+2024-11 | $231,200 | 1,145 | 10.9%
+2024-12 | $294,800 | 1,480 | 27.5%
+2025-01 | $267,300 | 1,290 | -9.3%
+_Note: Recent 5-month trend showing seasonal patterns_
+
+## Recommended actions
+- Prioritize initiatives indicated by the strongest patterns in measures.
+- Investigate temporal trends and dimensional segments for opportunities.
+- Validate findings with stakeholders and refine analysis as needed.
+"""
+
+    mock_analysis_data = {
+        "plan": {
+            "title": "E-commerce Performance Analysis",
+            "objectives": [
+                "Analyze revenue trends and growth patterns",
+                "Identify top-performing product categories and customer segments",
+                "Assess customer retention and churn metrics",
+                "Evaluate seasonal and temporal patterns"
+            ],
+            "steps": [
+                {"id": "1", "description": "Compute revenue statistics and trends", "required_columns": ["amount", "date"], "output_type": "kpi_table"},
+                {"id": "2", "description": "Analyze product category performance", "required_columns": ["category", "amount"], "output_type": "kpi_table"},
+                {"id": "3", "description": "Calculate customer lifetime value and churn", "required_columns": ["customer_id", "amount"], "output_type": "kpi_table"},
+                {"id": "4", "description": "Examine temporal patterns across time periods", "required_columns": ["date", "amount"], "output_type": "kpi_table"}
+            ]
+        },
+        "kpis": [
+            {"name": "Total Revenue", "value": 2450000.0, "explanation": "Sum of all transaction amounts across the analysis period", "related_columns": ["amount"]},
+            {"name": "Average Order Value", "value": 186.50, "explanation": "Mean transaction value per order", "related_columns": ["amount"]},
+            {"name": "Customer Lifetime Value", "value": 3250.0, "explanation": "Average revenue generated per customer over their lifetime", "related_columns": ["customer_id", "amount"]},
+            {"name": "Monthly Growth Rate", "value": 12.0, "explanation": "Average month-over-month revenue increase", "related_columns": ["date", "amount"]},
+            {"name": "Customer Churn Rate", "value": 18.0, "explanation": "Percentage of customers who discontinued purchases", "related_columns": ["customer_id", "is_churned"]},
+            {"name": "Top Category Revenue Share", "value": 34.0, "explanation": "Percentage contribution of the highest-grossing category", "related_columns": ["category", "amount"]},
+            {"name": "Premium Segment Size", "value": 450, "explanation": "Number of customers in the premium tier", "related_columns": ["segment"]},
+            {"name": "Active Products", "value": 127, "explanation": "Count of products with at least one sale", "related_columns": ["product_id"]}
+        ],
+        "tables": [
+            {
+                "title": "Revenue by Product Category",
+                "columns": ["Category", "Revenue", "Orders", "Avg Order Value"],
+                "rows": [
+                    ["Electronics", "$835,000", 3240, "$257.72"],
+                    ["Home Goods", "$612,500", 2890, "$211.94"],
+                    ["Apparel", "$441,250", 3120, "$141.43"],
+                    ["Sports Equipment", "$327,800", 1450, "$226.07"],
+                    ["Books & Media", "$233,450", 1890, "$123.52"]
+                ],
+                "description": "Top 5 categories by revenue contribution"
+            },
+            {
+                "title": "Customer Segmentation Analysis",
+                "columns": ["Segment", "Customer Count", "Avg LTV", "Churn Rate", "Revenue Share"],
+                "rows": [
+                    ["Premium", 450, "$4,200", "8%", "42%"],
+                    ["Standard", 1240, "$2,850", "15%", "48%"],
+                    ["Budget", 680, "$1,320", "28%", "10%"]
+                ],
+                "description": "Customer distribution across value tiers"
+            },
+            {
+                "title": "Monthly Revenue Trend",
+                "columns": ["Month", "Revenue", "Orders", "Growth %"],
+                "rows": [
+                    ["2024-09", "$185,000", 890, "--"],
+                    ["2024-10", "$208,400", 1020, "12.6%"],
+                    ["2024-11", "$231,200", 1145, "10.9%"],
+                    ["2024-12", "$294,800", 1480, "27.5%"],
+                    ["2025-01", "$267,300", 1290, "-9.3%"]
+                ],
+                "description": "Recent 5-month trend showing seasonal patterns"
+            }
+        ],
+        "metadata": {
+            "run_timestamp": datetime.now().isoformat(),
+            "model": "claude-3-haiku-20240307",
+            "temperature": 0.3,
+            "input_files": [
+                {"filename": "sample_sales.csv", "rows": 500, "columns": 8, "sha256": "abc123def456789"},
+                {"filename": "sample_customers.csv", "rows": 200, "columns": 5, "sha256": "def789ghi012345"}
+            ]
+        },
+        "column_roles": {
+            "sample_sales.csv": {
+                "transaction_id": {"column_name": "transaction_id", "role": "text", "dtype": "text"},
+                "date": {"column_name": "date", "role": "time", "dtype": "datetime"},
+                "customer_id": {"column_name": "customer_id", "role": "text", "dtype": "text"},
+                "product_id": {"column_name": "product_id", "role": "text", "dtype": "text"},
+                "category": {"column_name": "category", "role": "dimension", "dtype": "categorical"},
+                "amount": {"column_name": "amount", "role": "measure", "dtype": "numeric"},
+                "quantity": {"column_name": "quantity", "role": "measure", "dtype": "numeric"},
+                "discount": {"column_name": "discount", "role": "measure", "dtype": "numeric"}
+            },
+            "sample_customers.csv": {
+                "customer_id": {"column_name": "customer_id", "role": "text", "dtype": "text"},
+                "segment": {"column_name": "segment", "role": "dimension", "dtype": "categorical"},
+                "signup_date": {"column_name": "signup_date", "role": "time", "dtype": "datetime"},
+                "lifetime_value": {"column_name": "lifetime_value", "role": "measure", "dtype": "numeric"},
+                "is_churned": {"column_name": "is_churned", "role": "dimension", "dtype": "categorical"}
+            }
+        },
+        "notes": None
+    }
+
+    return mock_report, mock_analysis_data
+
 # Hero Header
 st.markdown(
     """
@@ -561,9 +732,16 @@ with col2:
         label_visibility="collapsed",
     )
 
-# Action button
+# Action buttons
 st.markdown("---")
 col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
+with col_btn1:
+    # DEV ONLY: Quick test button
+    quick_test_button = st.button(
+        "⚡ Quick Test (No Tokens)",
+        use_container_width=True,
+        help="Load mock data for UI testing without consuming API tokens",
+    )
 with col_btn2:
     generate_button = st.button(
         "Generate Executive Report",
@@ -571,6 +749,16 @@ with col_btn2:
         use_container_width=True,
         disabled=not uploaded_files or not business_brief,
     )
+
+# Quick Test Handler (DEV ONLY)
+if quick_test_button:
+    st.info("⚡ Loading mock analysis data (no tokens consumed)...")
+    mock_report, mock_analysis_data = generate_mock_analysis()
+    st.session_state.report_content = mock_report
+    st.session_state.analysis_data = mock_analysis_data
+    st.session_state.report_generated = True
+    st.session_state.qa_history = []  # Clear Q&A history
+    st.rerun()
 
 # Process and display results
 if generate_button:
